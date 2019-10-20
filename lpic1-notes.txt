@@ -1,0 +1,71 @@
+#_Bash History and the Manual Pages
+
+*Bash History
+
+- history - command that shows the most recently ran commands
+
+- .bash_history - file located in the user's home directory that contain the previously run commands
+
+- HISTFILESIZE - env variable that determines how many lines the .bash_history file will contain
+
+you can use ![history#] to enter a command again
+can set history append in the ENV variable so that you can just append new commands to the history rather than?
+
+*Manpages
+separated into sections (list sections here)
+
+- man - command used to open the manual page for a specified command
+
+- man -k - used to search the man pages, from the command line, for a specific keyword; it basically give us a bunch of man pages that has your key word in it; eg: `man -k touch`
+
+- apropos - links to the man -k command; same as above; eg: `apropos touch`
+
+- man[section number] - open a particular section number for a specified command; `man 4 synaptics`
+
+
+#_Basics of Viewing Text Files
+
+*Basic Commands for Viewing Text Files
+- cat - used to concatenate or join and view text files; typically you will also redirect the output to a file using >> or <<
+
+- less - read-only text viewing utiolity; allows for paging up and down within a file, and keyword searches (list common commands to navigate in less)
+
+- head - defaults to displaying the first 10 lines in a file; you can use `head -[#]` or `tail -[#]` to specify how many lines you want to see
+
+- tail - defaults to displaying the last 10 lines in a file; it is super useful to add a `-f` to the tail command if you want to follow the input to a file in real time; eg: `tail -f /var/log/nginx/error.log`
+
+- zcat - use to view gzip compressed text files
+
+- bzcat - used to view bunzip compress text files
+
+- xzcat - used to view xz compressed text files
+
+
+#_Text File Statistics
+- nl - prints the number of lines in a file; output can be modified to fit different cases; the default behaviour of nl is that it will display all lines but only count/number the lines with text in them; `nl -b a test.txt` will output blank lines and count those as well
+
+- wc - word count command; can be used to print the number of words, lines, or bytes in a file; eg: `wc test.txt` will give and output of `3 4 30 test.sh`; first number is the number of lines, the second number is the word count, which is typclally each unbroken string deliniated by spaces or eol, the third number is the byte size of the file.  can break it up with flags -w, -l, -c, for word count, lines count, and byte count
+
+
+- od - the octal dump command; use to print out a file in octal or many other formats; (expand od -c and od -a); octal dumps are good for finding charaters and data that does not beling in a file
+
+*Message Digests
+- md5sum - eg: `md5sum [file]`; use this to check the fingerprint of a file; md5 is the weakest form of this finterprint; but it is still usefull to make sure a file is not corrupted or modified eg: `md5sum -c file.md5`
+
+- sha256 -
+
+- sha512 - (so how do these check?  It seems as though it is checking itself)
+
+#_Text Manipulation
+- sort - sorts data; `sort -n list.csv` `sort -t "," -k2 list.csv
+
+- uniq - collapses two of the same datapoints if they are consecutive; Repeated lines in the input will not be detected if they are not adjacent, so it may be necessary to sort the files first. can use `sort -u <file>` to find the absolute unique characters.
+
+- tr - translate or swap characters in a file for another character
+- cut -  
+- paste -  instead of catting to the end of a file; this will paste charaters in the same line in parrell
+
+#_More Text Manipulation
+- sed - 'nuff sed
+- split - will split a file by 1000 charaters by default; you can specify how you want it split; give you default naming conventions
+- cat - to put a split file back togehter
