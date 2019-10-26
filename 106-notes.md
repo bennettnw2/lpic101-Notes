@@ -5,19 +5,21 @@
 #### * The basics of X11 is that this is how we have graphics displayed on Linux systems.
 * the X11 protocol was brought about by "X.org"
   * provides graphical rendering for unix like operating systems
-  * X11 is the core display server system that provides the protocol service, called X11, for the X Window System
+  * X11 is the core display server-system, that provides the protocol service, called X11, for the X Window System
+    * the x window system basically just provides 2-D rendering
   * provides extra functionality via extensions, such as:
     * RandR: provides dynamic resizing of the root window, refresh rates, mirroring displays
-    * GLX: provides rendering of DG OpenGL content within an X11 windows
+    * GLX: provides rendering of 3-D OpenGL content within an X11 windows
     * Xinerama: provides the ability to split the desktop display across multiple monitors
+  * Each graphical rendering on an X display are clients of the X.org server
 
 
 #### * What are the building blocks of the basic X11 architecture
 * Very simplified rendition
   * we start with the graphics card on the bottom; how we connect the monitor to the computer
   * next is the kernel which by using drivers and modules; will send graphical info to the screen
-  * then we have libDRM - direct rendering manager - will communicate with the kernel
-    * this library layer sits between the kernel and X-server (the actual
+  * then we have libDRM - Direct Rendering Manager - will communicate with the kernel
+    * this library layer sits between the kernel and X-server
     * the kernel received data from the libDRM; (reminds me of a data bus)
   * the next layer is the X-server
     * the config files for X-server are: /etc/X11/xorg.conf and /etc/X11/xorg.conf.d 
@@ -28,14 +30,118 @@
 
 #### * Wayland
   * Replacement for the X Window System
-  * uses a simpler rendering protocol
+  * uses a simpler rendering architecture which has fewer steps than the ones outlined above for X11
   * constantly being improved; new components are added regularly to bring it to feature parity with X.org
   * provides XWayland, a library that enables an X Window client to render with Wayland
     * this provides backwards compatibility
 
 ### Installing X11
-### X11 Configurations
+  * this is done on CentOs 5.11
+  * `yum grouplist` will list out all the possible group installs
+    * we want to `yum -y groupinstall "X Window System"` to install the X Window System components
+  * we can use the telinit command to change to the graphical display (runlevel 5 or graphical.target)
+  * `runlevel` will tell us that we are at runlevel 3
+  * `telinit 5` or `init 5` will get us there
+  * this will then take us to GDM or the Gnome Display Manager
+    * the role of the GDM is to handle a user's session and authentication
+    * it will also start up the display server (X11) and our desktop
+    * you also have the option to shut down or restart your computer
+  * try not to ever log into a system as the root user; always go in with a regular, limited user
+  * once we get logged in we are greeted by TWM or better known as Tab Window Manager
+    * TWM is one of the simplest desktop environments you can use in Linux
+    * `iconmanager` is like a taskbar
+  * A window manager is what provides the look and feel of a desktop
+    * a window manager gives us our title bars, icons, colors, dictates how the mouse behaves when dealing with individual windows
+    * we can start the window manager(X11 and TWM) without going through the display manager (GDM)
+    * if you run `startx` from runlevel 3(CLI with networking) or 4(custom)
+    * this is very unsecure as you bypass the authentication and session management of GDM
+  * So how does X11 know how to start GDM rather than just `startx`?
+    * first we take a look at the `/etc/inittab` file
+    * we will notice this line:
+    ```
+    # Run xdm in runlevel 5
+    x:5:respawn:/etc/X11/prefdm -nodaemon
+    ```
+    * the `/etc/X11/prefdm` will show a list of display managers and it will go through that list until it finds the one that is installed on the system
 
+  * It is a very similar configuration on modern systems with systemd
+    * if you start with your default target unit file `/etc/systemd/system/default.target`
+    * we will see `Wants=display-manager.service`
+      * next we check out this service unit file located at `/etc/systemd/system/display-manager.service`
+    * we will then see `ExecStart=/usr/sbin/gdm`
+
+  * Back to our Centos Machine:
+    * note that each window you see is a client of the X windows server
+    * there is communication back and forth between the window manager(TWM) and X windows server(X11) regarding:
+      * geometry
+      * size
+      * positioning
+    * there is an environment variable that will help us out with things like this `$DISPLAY`
+    ```
+    echo $DISPLAY
+    :0.0
+    ```
+    * technically there is something to the left of the colon; this is the host that the x server is running on
+      * this could be the localhost, loopback address, or blank (as we see here) if the x server is local to the computer 
+    * the first 0 indicates which x server is in use, (kind of like TTY numbers?)
+    * the second 0 indicates which screen we are using
+      * if we had a second monitor this number would be 1, etc
+
+  * Lastly you will want to know that the .xsession-errors is in the home directory
+  * this will capture error messages from the display manager to help debug graphical applications
+  * this needs to be configured by your display manager
+
+### X11 Configurations
+  * this is where we talk about the `xorg.conf` file which is the file we use to configure the xorg server
+  * this file is located at `/etc/X11/xorg.conf`
+    * There are sections that indicate what to do with things
+    * each section is responsible for a function of the xserver
+    * xorg.conf and xorg.conf.d are composed of a number of sections which may be present in any order or omitted to use default configuration values.
+    * Each section has the form:
+    ```
+    Secton "SectionName"
+        SectionEntry
+        ...
+    EndSection
+    ```
+    * The section names are:
+    ```
+       Files          File pathnames
+       ServerFlags    Server flags
+       Module         Dynamic module loading
+       Extensions     Extension enabling
+       InputDevice    Input device description
+       InputClass     Input class description
+       OutputClass    Output class description
+       Device         Graphics device description
+       VideoAdaptor   Xv video adaptor description
+       Monitor        Monitor description
+       Modes          Video modes descriptions
+       Screen         Screen configuration
+       ServerLayout   Overall layout
+       DRI            DRI-specific configuration
+       Vendor         Vendor-specific configuration
+    ```
+  
+  * `X -configure` or `xorg -configure` will generate a new `xorg.conf` file in our root's home directory
+    * you can test the new config file with `X -config /root/xorg.conf.new`
+    * you will be greeted by a blank screen with an "X" shaped cursor
+    * this is because no applications have sent any instructions to the x server to draw anything
+    * but we know it works!  You can exit out of it with ctl-alt-delete
+    * then you can copy the new config file to its proper place of `/etc/X11/xorg.conf`
+
+  * ##### `xdpyinfo`
+    * this will display information about the current X session and X server instance
+
+  * you can make changes to `/etc/X11/xorg.conf.d`
+  * reboot the system for the changes to take effect
+
+  * modern xorg servers do not use the `xorg.conf` configuration file any more
+  * this is considered old school
+  * instead we will have a `/etc/X11/xorg.conf.d/` directory that contains individual configuration files
+  * these files will start with double digits as the x server will load them in numerical order
+  * the default amount of these files will be small as newer versions of x server are much better at auto detecting hardware
+  * if you did have a `xorg.conf` file, it would be loaded last after the ones in the directory
 
 ### Remote Graphical Connections
 The X-server is able to allow you to view remote application windows
@@ -49,13 +155,13 @@ The X-server is able to allow you to view remote application windows
     * this allows all incoming connections to your x-server regardless of where a user is coming from
   * `xhost -` will disable all incoming connections
   * you can run `xhost + [IP ADDRESS]` to enable a specific host to connect 
-    * first get your systems IP address
+    * first get your system's IP address
     * run the command, we now have remote x-connections that are allowed from our local system
   * Next you will ssh into your remote system with a `-Y` (capital Y)
     * eg: `ssh -Y user@193.234.23.03`
     * `-Y` will lets ssh know to forward any X11 requests
   * Once logged into your remote system you will need to set up a display environment variable
-    * this display env variable will redirect graphical requests to the local system
+    * this display environment variable will redirect graphical requests to the local system
     * thereby you execute commands on your remote system and they show up on your local system
     * eg: `export DISPLAY=127.0.0.1:10.0`
       * we use the local host IP of the remote system

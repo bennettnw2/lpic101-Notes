@@ -87,7 +87,9 @@ After the kernel loads up and loads the initial ram disk, it then looks for an i
 
 Then sysvinit will firstly look for instructions in `/etc/inittab`.  This is the sysvinit configuration file. So what does sysvinit want to get out of /etc/inittab? One thing is to determine the runlevel to run the system on.
 
-`Runlevel` predefined configuration to run the system as.  Each runlevel will start or stop scripts depending on what the runlevel asks for.  Only one runlevel can be active at a time.  The runlevel applies to the system as a whole.  These are the based on the Linux standards base.  Slackware and Gentoo have a slightly different.
+#### * `Runlevel` is a predefined configuration to run the system as.  Each runlevel will start or stop scripts depending on what the runlevel asks for.  Only one runlevel can be active at a time.  The runlevel applies to the system as a whole.  These are the based on the Linux standards base.  Slackware and Gentoo have a slightly different.
+
+```
 0   Halt
 1   Single user mode
 2   Multi-user mode (no networking)
@@ -95,23 +97,18 @@ Then sysvinit will firstly look for instructions in `/etc/inittab`.  This is the
 4   unused
 5   Multi-user, with networking and a graphical desktop
 6   Reboot
-
+```
+```
 0 stop services and power off
-
 1 single user mode, the root user is the only user allowed to log into the system; used for repair and maintenance
-
 2 multiple users but no networking or remote file systems
-
 3 same as above except networking is available; most Linux servers were configured to run at this level.
-
 4 for a custom environment
-
 5 same as 3 but with a graphical desktop
-
 6 stops services and restarts system
+```
 
-
-Example inittab file:
+#### Example inittab file:
 for example:  `id:3:initdefault:`
 <identifier>:<runlevel>:<action>:<process>
 `action` there are predefined actions that init understands.  There are no processes to act on from the above example
