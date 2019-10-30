@@ -192,7 +192,7 @@ Why would I want to add logical operators to my shell scripts?
         echo "/opt exists"
       fi
       ```
-      * Note that you will need to have a space after the opening bracket and before the closing brackt or you will get a "command not found" error
+      * Note that you will need to have a space after the opening bracket and before the closing bracket or you will get a "command not found" error
       * What if the directory we are looking for does not exist?
       * We need to branch with an `else` statement to handle that possibility
       * This is known as an `if else` statement
@@ -227,11 +227,13 @@ Why would I want to add logical operators to my shell scripts?
     ```
     * this will return "True" because one of the two conditions are True
     * you will notice that we use double square brackets
-    * we do this so we can contain both expressions in one set of brackets
-    * otherwise the conditional statement would look like this:
-    ```bash
-    if [ -d /opt ] || [ -f ~/derp ]; then
-    ```
+      * we do this so we can contain both expressions in one set of brackets
+      * the double brackets will allow us to use file globing and regEx
+      * it is also easier to see the logic in the double brackets
+      * otherwise the conditional statement would look like this:
+      ```bash
+      if [ -d /opt ] || [ -f ~/derp ]; then
+      ```
     
   * ##### `&&`
     * this is the logical AND operator
@@ -252,6 +254,7 @@ Why would I want to add logical operators to my shell scripts?
     if [[ "$VALUE"="things" ]]
     ```
     * this will evaluate to true
+    * be sure to use soft quotes?  Why?
 
   * ##### `!=`
     * this character sequence indicates inequality
@@ -261,7 +264,9 @@ Why would I want to add logical operators to my shell scripts?
     ```
     * this will evaluate to false
     * NOTE: be careful that you do not run into any logical errors
-    * what is a logical error to be exact?
+      * a logical error is an error in the logic of a script or program
+      * it is not like a syntacical error in that a syntatical error will not run; you will get some sort of error at runtime
+      * a logical error is one where the script compiles just fine but the output is not what you expect it to be.  It is an error in the creation of the thinking of the program and not the program itself
 
   * ##### `elif` (else-if)
     ```bash
