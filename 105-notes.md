@@ -16,11 +16,11 @@ What is important to note here is to learn how these shells are created.  More s
   * `/etc/profile`
       * is the first program that is called right after you log in
       * gets read and it will call out to => /etc/profile.d/*
-  * /etc/profile.d/*
+  * `/etc/profile.d/*`
     * more configurations are available through /etc/profile.d/
     * /etc/profile pulls in these configurations
   * /etc/profile will then make the configs taken from /profile.d/ apart of itself
-  * then /profile/ will reach out to ~/.bash_profile
+  * then /profile/ will reach out to ~/.bash\_profile
   * `~/.bash_profile`
     * could be called `.profile`
     * resides in my home directory
@@ -65,7 +65,7 @@ What is important to note here is to learn how these shells are created.  More s
   * this will set up how my terminal looks and some shell options
     * like how your history is handled
 ##### `/etc/skel`
-  * this contains the default .bash_profile, .bashrc and other files that are added to a user's home directory when an account is created on the system
+  * this contains the default .bash\_profile, .bashrc and other files that are added to a user's home directory when an account is created on the system
   * you need to use the -a flag from ls in order to see the template files
     ##### `~/.bash_logout`
       * this file get called on a user logout event
@@ -78,8 +78,8 @@ What is important to note here is to learn how these shells are created.  More s
       * used to start applications
 
 Process and order that these files are called is very important.
-```
-First .bash_login (if it exists)
+
+First .bash\_login (if it exists)
 Then /etc/profile which also pulls in /etc/profile.d
 Then `.bash_profile` is tapped which in turn calls on `.bashrc`
 
@@ -192,6 +192,7 @@ Why would I want to add logical operators to my shell scripts?
         echo "/opt exists"
       fi
       ```
+      * Note that you will need to have a space after the opening bracket and before the closing brackt or you will get a "command not found" error
       * What if the directory we are looking for does not exist?
       * We need to branch with an `else` statement to handle that possibility
       * This is known as an `if else` statement
