@@ -214,6 +214,7 @@ The X-server is able to allow you to view remote application windows
 
 ## 106.2 Graphical Desktops
 * Linux has many different flavors of desktop environments
+  * a desktop environment is typically a collection of software 
 * You can use any desktop environment on any distribution
 * A desktop environment is a collection of software like:
   * window manager
@@ -230,18 +231,25 @@ The X-server is able to allow you to view remote application windows
     * ##### GTK+ Based Desktops
       * GTK+ is primarily a C language library
       * GNOME and XFCE are built with this
-      * Virtual desktops are known as activated in GNOME
+      * Virtual desktops are known as "Activities" in GNOME
       * Activities overview shows the taskbar and the desktops you can use on the right
-      * ctl opt up and down to move through activities
+      * Ctl+Alt and the up and down arrow keys to move through activities
       * XFCE is very lightweight and very customisable
-      * you can choose different desktop environments from the login screen
+      * you can choose any desktop environment from the login screen or more technically known as the display manager
+      * Note: there are many display managers you are able to use
+        * GDM (Gnome Display Manager)
+        * SDDM (Simple Desktop Display Manager)
+        * LXDM (LXDE Display Manager)
+        * LightDM
+        * KDM (KDE Display Manager)
+        * XDM (X Display Manager)
 
     * ##### Qt Based Desktops
       * Qt is based on a C++ language library used for graphical applications
       * KDE resembles the windows desktop environment; but that is only on the surface
       * KDE plasma was widgets that you can use to decorate your desktop
       * Alt+F2 will give you a search bar to search your system for either an app or a file
-      * KDE will use up much more disk space and RAM than GNOME and KDE
+      * KDE will use up much more disk space and RAM than GNOME and XFCE
 
 
 ## 106.3 Accessibility

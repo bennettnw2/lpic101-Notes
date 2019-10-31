@@ -204,6 +204,7 @@ Why would I want to add logical operators to my shell scripts?
       fi
       ```
       * can use -f to test for a file existed and is a regular file
+
   * ##### `test`
     * with using `test` you do not need brackets for your conditions
     * the brackets actually represent this `test` command
@@ -216,6 +217,17 @@ Why would I want to add logical operators to my shell scripts?
       echo "This file does not exist"
     fi
     ```
+    ```
+    `-d [ file ]`: `file` exists and is a directory
+    `-f [ file ]`: `file` exists and is a regualr file
+    `-h [ file ]`: `file` exists and is a symbolic link
+    `-r/w/x [ file ]`: `file` exists and user has read, write or execute permissions (as indicated by letter
+    `-s [ file ]`: `file` exists and is larger than 0 bytes in size
+    ```
+    * the `test` keyword can be omitted completely using the "square brackets" method []
+      * eg: `if [ -f /home/user/testfile.txt ]`
+        * this will test the existence of a file and if it is a regualr file (not a directory file)
+
   * ##### `||`
     * this is the logical OR operator
     ```bash
@@ -248,7 +260,10 @@ Why would I want to add logical operators to my shell scripts?
     * if both the conditions were true, this would return "True"
 
   * ##### `=`
-    * the equal sign is used to check the quality of a statement
+    * the equal sign is used to check the equality of a statement
+    * the equal sign is used for comparing strings only
+      * numbers to represent values
+      * strings are just textual representation of numbers
     ```bash
     VALUE="things"
     if [[ "$VALUE"="things" ]]
@@ -265,8 +280,10 @@ Why would I want to add logical operators to my shell scripts?
     * this will evaluate to false
     * NOTE: be careful that you do not run into any logical errors
       * a logical error is an error in the logic of a script or program
-      * it is not like a syntacical error in that a syntatical error will not run; you will get some sort of error at runtime
-      * a logical error is one where the script compiles just fine but the output is not what you expect it to be.  It is an error in the creation of the thinking of the program and not the program itself
+      * it is not like a syntatical error in that a syntatical error will not allow a program to run
+      * you will get some sort of error at runtime
+      * a logical error is one where the script compiles just fine but the output is not what you expect it to be.
+      * It is an error in the creation of the thinking of the program and not the program itself
 
   * ##### `elif` (else-if)
     ```bash
@@ -290,7 +307,7 @@ Why would I want to add logical operators to my shell scripts?
     if [ $NUMBER -gt 2 ]; then
       echo "NUMBER is higher"
     else
-      echo "Number is not nigher"
+      echo "Number is not higher"
     fi
     ```
     
@@ -333,6 +350,7 @@ This section is all about how to repeat commands using
       * this opens up in-place of the shell that has the for loop
       * this saves you some computing overhead
   * typically number one is used
+
   ```bash
   for i in $(seq 1 15)
   do
@@ -356,6 +374,7 @@ This section is all about how to repeat commands using
     echo "Our current count is: $COUNT"
     let COUNT=COUNT+1
   done
+  ```
   * while loops have a condition is already set
   * you want to run the loop until the condition is no longer set
   * while = do the thing while true
@@ -383,6 +402,7 @@ This section is all about how to repeat commands using
   ```
   * the `read` command takes input from the user (or file) and applies that input to a variable for a command or script
   * use read to get input from a user in a script
+  * this can also be used to read in lines from a file
 
 * ##### `exit`
   * the `exit` command in a script will return a 0 to the operating system
