@@ -282,11 +282,13 @@
     * Each user needs to have a private and a public key
     * These are the steps needed to exchange encrypted files:
     1. Generate a pair of keys:
+      * Be sure that you are fully logged in as your user.  You can not be su or sudoed in.
+        * the reason is that the gpg agent will use your full environment to create your keys
+        * this will help so that no one tries to fake a key with your user
+        * the gpg agent will also use entropy to create your key so the more entropy the better
+          * entropy is not on the exam but is good to know about for real world applications.
       * `gpg --gen-key`
         * this will start the process and generate a new gpg public key
-        * you need to be logged in at that particular user
-          * you should not be sudo or su
-          * when generating a key, it takes account of your user environment
         * it will prompt you for:
           * type of key to be created
           * length of the key (longer key is better but takes more time to generate)
@@ -302,6 +304,25 @@
     2. View the keys that have been created:
       * `gpg --list-keys`
         * we will be able to see the key we just created
+      * next move into the .gnupg file to create your public key you will give to another person
+      * `gpg -o avancepubkey --export 16FECFF5`
+        * the -o means to output a name of the public key
+        * the --export will use the private? key you just made to connect the `avancepubkey` together
+
+    3. Exchange keys
+    4. Import Keys into your keyrings
+      * `gpg --import avancepubkey`
+    5. Encrypt files with:
+      * `gpg -r "Alyx Vance" -e passwd`
+      * you will then see a file `passwd.gpg`
+      * this is the encrpyted file and now you can email the encrypted file to avance
+
+
+* TODO:
+ * create two users
+ * create private and public keys for both users
+ * encrypt a file and send to the other and open it up from the other account
+
 
 
   * ### SSH
