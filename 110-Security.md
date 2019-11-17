@@ -282,11 +282,20 @@
     * Each user needs to have a private and a public key
     * These are the steps needed to exchange encrypted files:
     1. Generate a pair of keys:
+      * For this example, we will create a pair of keys for two users and then we will exchange a file between these two users
       * Be sure that you are fully logged in as your user.  You can not be su or sudoed in.
         * the reason is that the gpg agent will use your full environment to create your keys
         * this will help so that no one tries to fake a key with your user
         * the gpg agent will also use entropy to create your key so the more entropy the better
           * entropy is not on the exam but is good to know about for real world applications.
+            * with cryptography relies on entropy
+            * entoropy is a random pool of data
+            * it is used as a starting point for encryption algorithm
+            * the more entropy the better
+            * entropy comes from many different things
+            * intall rng-tools to give you more entropy on a system
+            * `yum -y install rng-tools`
+            * `sudo systemctl start rngd.service`
       * `gpg --gen-key`
         * this will start the process and generate a new gpg public key
         * it will prompt you for:
@@ -316,12 +325,19 @@
       * `gpg -r "Alyx Vance" -e passwd`
       * you will then see a file `passwd.gpg`
       * this is the encrpyted file and now you can email the encrypted file to avance
+  * Just as a summary for myself:
+    * first I create my private key?  and it also creates a keyring?
+    * then I create an individual key that I will give to someone in order for them to decrypt my files individually
 
-
-* TODO:
- * create two users
- * create private and public keys for both users
- * encrypt a file and send to the other and open it up from the other account
+  * Revoking a key
+    * `gpg -a -o revoce.asc --gen-revoke F60C5E97`
+    * you will then go through a few prompts and you can provide a reason with an optional comment
+    * press y and your passphrase for your key.
+    * then you will need to import the revoked key into your keyring
+      * `gpg --import revoke.asc`
+    * will also need to send anyone my revoke key as well
+      * the better way to do this is to upload your revoked key to the MIT keyserver
+      * `gpg --keyserver pgp.mit.edu --send-keys E34C2R58`
 
 
 
