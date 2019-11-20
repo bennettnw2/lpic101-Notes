@@ -342,6 +342,75 @@
 
 
   * ### SSH
+    * this is how to connect via encrypted connections
+    * it is the sshd daemon that does everything
+    * located /etc/ssh/sshd\_config
+    * example file and only some important parts:
+    ```
+    HostKey /etc/ssh/ssh_host_rsa_key
+    #HostKey /etc/ssh/ssh_host_dsa_key
+    HostKey /etc/ssh/ssh_host_ecdsa_key
+    HostKey /etc/ssh/ssh_host_ed25519_key
+
+    # Authentication:
+
+    #LoginGraceTime 2m
+    PermitRootLogin no
+    #StrictModes yes
+    #MaxAuthTries 6
+    #MaxSessions 10
+
+    X11Forwarding yes
+    ```
+
+    * if we take a look at what is in the /etc/ssh/ folder we will see the key files that are used for encryption algorithims
+      * they also determine what types of encryption we will accept on our server
+    * private keys here will only have rw for the root user and read for the root group
+    * public keys in this dir will be rw for root and read for everyone else 
+
+    * individual settings for ssh will be located in the home dir of the user under .ssh
+      * individual ssh keys are stored here
+      * only the user has full access to this directory or 700 permissions
+    * what happens when you make a connection to another server?
+      * to initate a session you use `ssh $USER@IPADDRESS/HOSTNAME`
+      * the user you are attempting to log in with will need to be sure that they have an account on the remote system
+      * the first time you attempt to connect you will be presented with the fingerprint of the keys of the ssh server of the computer
+        * these fingerprints are taken from those keys in /et/ssh/ssh_config
+      * then you enter 'yes' and also enter your password
+      * if you log out of the system and then check your local .ssh folder you will now see a file called `known_hosts`
+        * each remote system will have it's own line in this file
+        * each line will start with the IP address or hostname of the remote system
+          * then you will have the ecryption method
+          * then you will have the fingerprint from the remote system
+        * this is an important file as if someone tampers with the keys on the host and we try to login, we will get a warning
+          * this is to protect one from loggin into a compormised host
+          * this is similar to those errors of `man in the middle attack` but the IP has just changed
+          * which I will run `ssh-keygen -r $IPADDRESS`
+      * If we attempt to login again, there will be no prompt regarding the fingerprint because we have already done that stuff and the finger print is saved in our `known_hosts` file
+      * We will forever have to enter a password which is a bit tedious
+        * we can share keys between my local machine and the remote machine so I do not have to do that
+        * the ssh service will use the key files between the two machines for authentication
+        * in order to set it up we will need to create a new private and public key pair from the local account?
+          * NOTE:  you will need to set up a key pair for each separate account that you want to access the remote system
+          * you need individual pairs because the keys are stored in the home directory of a individual user
+        * to get the process started, you will want to run `ssh-keygen`
+          * by default, this creates a 2048 bit RSA encrypted key pair
+          * if you want to customize you can run something like:
+            * eg: `ssh-keygen -b 1024 -t DSA`
+        * you will then be asked where you want to save your keys
+          * you will just want to save them to the default location as there is no real good reason to move the location; unless your company has some cool and different security policy
+        * next you will be presented with the option to enter a passphrase for your key
+          * while not necessary, it will provide an extra layer of security
+          * heck, you could even have a passphrase keyfile, it think, somewheres
+        * this completes the creation of our key
+        * if we check our ~/.ssh folder, we will now see two new files: id_rsa and id_rsa.pub
+          * id_rsa is our private key and we keep that key secret and hidden and do not give it out anywheres
+          * id_rsa.pub is our public key and we give this out to the remote servers so that we are able to access them with our private key!
+            * if either of keys are tampered with, they will not match up and I will not be able to access the remote servers
+          * the next step is to uplad the key to the remote server
+            * a great way to do this would be to use the `ssh-copy-id` command
+
+
 
 
 
