@@ -66,11 +66,12 @@
         * but the ntpdaemon does indeedy do
 
   * ##### `ntpq`
-    * you can use the this daemon to make queries to NTP servers
+    * you can use the this command with the ntpd daemon to make queries to NTP servers
       * be sure the ntpd service is running
     *`ntpq -pn`
       * know that ntpq will give you various information about your upstream NTP servers
       * `-p` to show the Peer servers; `-n` will show the ip address
+      * also know that we can use it to get data regarding our upstream servers
 
 #### Chronyd Commands
 * use `timedatectl` to see if you are using ntp to sync
@@ -88,13 +89,16 @@
 * The configuration files are located here:
   * redhat  distribution => /etc/chrony.conf
   * ubunutu distribution => /etc/chrony/chrony.conf
+
 * ##### `chronyc`
   * this command will drop you into a chrony shell
   * run `activity` to see what sources are online and what sources are offline
   * run `sources` to get more detail on the ntp servers
-  * just like the `ntpq` command
+    * just like the `ntpq` command that checks on upstream communications
+  * type `exit` to get out of the prompt
 ! Remember as you move down the Stratum layer, the time gets less accurate
 ! Remember that NTP uses the UDP protocol on port 123
+
 
 ## 108.2 System Logging
 One of thee most important skills an administrator can have is system logging skills.  Knowing what is going in in your log files will unlock many mysteries of what is happening with your system.  Most every service in your system will create a logfile.
