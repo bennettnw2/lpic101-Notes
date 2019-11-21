@@ -339,12 +339,11 @@
       * the better way to do this is to upload your revoked key to the MIT keyserver
       * `gpg --keyserver pgp.mit.edu --send-keys E34C2R58`
 
-
-
   * ### SSH
     * this is how to connect via encrypted connections
     * it is the sshd daemon that does everything
-    * located /etc/ssh/sshd\_config
+    * located `/etc/ssh/sshd\_config`
+      * these are the config files for system wide
     * example file and only some important parts:
     ```
     HostKey /etc/ssh/ssh_host_rsa_key
@@ -409,6 +408,27 @@
             * if either of keys are tampered with, they will not match up and I will not be able to access the remote servers
           * the next step is to uplad the key to the remote server
             * a great way to do this would be to use the `ssh-copy-id` command
+              * this method will create a secure tunnel and copy our pub key and set proper permissions for us
+              * eg: `ssh-copy-id kenny@192.168.0.1`
+                * you will then log in like normal, ssh-copy-id will copy the key over and then drop you back into your local system
+              * once completed you will login and instead of entering in your password for your user, you will enter your passphrase that you configured earlier
+
+      * `ssh-agent`
+        * you can use `ssh-agent` to make multiple secure connections without entering in your passphrase
+        * eg: `ssh-agent bash`
+        * then `ssh-add` to add your passphrase to the `ssh-agent`
+        * this will only work for the bash shell that is wrapped up in the `ssh-agent`
+
+      * `.ssh/authorized_keys`
+        * this file indicates to the remote system which shared public keys it will accept connections from
+        * permissions of `authorized_keys` are 600
+
+      * ssh tunneling with X11
+        * allows us to use ssh to connect to a remote system using a X11 desktop environment
+        * this allow us to open up a graphical window from our remote computer on our local computer
+        * `ssh -X` will allow x-forwarding
+        * `ssh -x` will not allow x-forwarding
+        * `ssh -Y` is the most secure way to allow x-forwarding
 
 
 
