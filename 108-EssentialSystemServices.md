@@ -52,7 +52,7 @@
     * these directive will help you to set up an ntp server
     * main takeaway is:
       * the lines that begin with the term "server"
-      ```
+      ```bash
       server 0.centos.pool.ntp.org iburst
       server 1.centos.pool.ntp.org iburst
       server 2.centos.pool.ntp.org iburst
@@ -173,7 +173,7 @@ One of thee most important skills an administrator can have is system logging sk
     * this can contain messages from other host systems
     * you can configure logs to send their data to a different host
     * Output of: `tail /var/log/messages
-    ```
+    ```bash
     Nov 22 14:57:03 pydev dbus[597]: [system] Successfully activated service 'org.freedesktop.nm_dispatcher'
     Nov 22 14:57:03 pydev systemd: Started Network Manager Script Dispatcher Service.
     Nov 22 14:57:03 pydev nm-dispatcher: req:1 'dhcp4-change' [eth0]: new request (4 scripts)
@@ -223,10 +223,113 @@ One of thee most important skills an administrator can have is system logging sk
     * there are also config files under `/etc/rsyslog.d`
       * this is a great space to have custom logging configs
     * NOTE: `rsyslog` daemon needs to restart for changes made to `rsyslog.d` and `rsyslog.conf`
+  * You can also configure rsyslog to receive log messages from one system to another
+    * from within the default config files located at `/etc/rsyslog.conf` you will want to comment out the proper rules
+      * on the receiving machine you want to allow connections
+      * on the sending machine you will want to send all messages
 
     * ##### `/etc/logrotate.conf`
+      * storage management of your logs is very important
+      * lets start by taking a look at the /var/log directory
+      ```bash
+      $ ls /var/log
+      anaconda           dmesg                  maillog-20191110   secure-20191117
+      audit              dmesg.old              maillog-20191117   spooler
+      boot.log           fail2ban.log           messages           spooler-20191027
+      boot.log-20190823  fail2ban.log-20191027  messages-20191027  spooler-20191103
+      boot.log-20190912  fail2ban.log-20191103  messages-20191103  spooler-20191110
+      boot.log-20191025  fail2ban.log-20191110  messages-20191110  spooler-20191117
+      boot.log-20191107  fail2ban.log-20191117  messages-20191117  tallylog
+      btmp               firewalld              ntpstats           tuned
+      btmp-20191101      grubby                 qemu-ga            wtmp
+      chrony             grubby_prune_debug     rhsm               Xorg.0.log
+      cron               httpd                  sa                 Xorg.0.log.old
+      cron-20191027      lastlog                secure             yum.log
+      cron-20191103      maillog                secure-20191027    yum.log-20191027
+      cron-20191110      maillog-20191027       secure-20191103
+      cron-20191117      maillog-20191103       secure-20191110
+      ```
+      * do you notice those folders with what looks to be a date behind them?
+      * well, they are dates and those are the dates with which the log was rotated out and the new one was started
+      * this helps you to find information from an event that has happened in the past
+      * the logrotate daemon handles this funtionality and it is configured at `/etc/logrotate.conf` 
+      ##### Example of `logrotate.conf` file
+      ```bash
+      # see "man logrotate" for details
+      # rotate log files weekly
+      weekly
+
+      # keep 4 weeks worth of backlogs
+      rotate 4
+
+      # create new (empty) log files after rotating old ones
+      create
+
+      # use date as a suffix of the rotated file
+      dateext
+
+      # uncomment this if you want your log files compressed
+      #compress
+
+      # RPM packages drop log rotation information into this directory
+      include /etc/logrotate.d
+
+      # no packages own wtmp and btmp -- we'll rotate them here
+      /var/log/wtmp {
+          monthly
+          create 0664 root utmp
+              minsize 1M
+          rotate 1
+      }
+
+      /var/log/btmp {
+          missingok
+          monthly
+          create 0600 root utmp
+          rotate 1
+      }
+
+      # system-specific logs may be also be configured here.
+      ```
+      * it is prety self explanitory
+      * made these changes to the file:
+      ```bash
+      # use date as a suffix of the rotated file
+      dateext
+
+      # modify the way the date looks
+      dateformat _%Y-%m-%d
+
+      # uncomment this if you want your log files compressed
+      compress
+      ```
+      * now if i run `logrotate /etc/logrotate.conf` this will trigger the logrotate daemon to run
+      * however, since we did not have a minium of 1M it did not run
+      * we can force is to run with the *force* flag `-f`
+      * `logrotate -f /etc/logrotate.conf` which will give me the output below:
+      ```bash
+      [root@li1244-43 ~]# service rsyslog restart
+      Shutting down system logger:                               [  OK  ]
+      Starting system logger:                                    [  OK  ]
+      [root@li1244-43 ~]# logrotate /etc/logrotate.conf
+      [root@li1244-43 ~]# ls /var/log/
+      anaconda.ifcfg.log    anaconda.storage.log  anaconda.yum.log  btmp   dmesg.old   maillog   secure   tallylog
+      anaconda.log          anaconda.syslog       audit             cron   dracut.log  messages  spooler  wtmp
+      anaconda.program.log  anaconda.xlog         boot.log          dmesg  lastlog     sa        syslog   yum.log
+      [root@li1244-43 ~]# logrotate /etc/logrotate.conf  -f
+      [root@li1244-43 ~]# ls /var/log/
+      anaconda.ifcfg.log    audit               dmesg.old               sa                     wtmp
+      anaconda.log          boot.log            dracut.log              secure                 wtmp_2019-11-23.gz
+      anaconda.program.log  btmp                lastlog                 secure_2019-11-23.gz   yum.log
+      anaconda.storage.log  btmp_2019-11-23.gz  maillog                 spooler
+      anaconda.syslog       cron                maillog_2019-11-23.gz   spooler_2019-11-23.gz
+      anaconda.xlog         cron_2019-11-23.gz  messages                syslog
+      anaconda.yum.log      dmesg               messages_2019-11-23.gz  tallylog
+      ```
+      * note the date format and the gzip compression
 
     * ##### `/etc/logrotate.d`
+      * each file in this directory is a logrotate configuration package created by that package's installer
 
 * ### Introduction to the systemd Journal
 * systemd Journal
@@ -239,7 +342,7 @@ One of thee most important skills an administrator can have is system logging sk
   * the default location is /run/log/journal/
     * this info is lost on reboot as the journal collects so much data
     * you can keep the journal permanent by running the below commands
-      ```
+      ```bash
       mkdir -p /var/log/journal
       systemd-tmpfiles --create --prefix /var/log/journal
       ```
