@@ -340,25 +340,29 @@ One of thee most important skills an administrator can have is system logging sk
     * system services that send output to STDOUT and STDERR
     * audit records for SELinux messages (RHEL / Centos)
   * the default location is /run/log/journal/
-    * this info is lost on reboot as the journal collects so much data
+    * this info is lost on reboot as it is in the /run directory and the journal collects so much data
     * you can keep the journal permanent by running the below commands
       ```bash
       mkdir -p /var/log/journal
       systemd-tmpfiles --create --prefix /var/log/journal
       ```
+    * a system with a large load will use up alot of space!
+    * a smaller system will have about 3-6GB of data for 6-12 months of data
     * you can control the size of the journal in the journal config file
       * `/etc/systemd/journald.conf` is the location of the journal config file
       * `man 5journald.conf`
+
     * [Journal]
       * Storage=
         * this setting will determine whether to store the log on the disk or in memory
         * storing on disk will be persistent; storing in ram is temporary/non-persistent
-        * auto - the default setting
+        * there are four setting for this Storage directive
+        * 1. auto - the default setting
           * this will store data to `/var/log/journal` (if it exists)
           * will also store to `/run/log/journal`
-        * persistent - data is stored to `/var/log/journal` hierarchy
-        * volatile - data is only sent to `/run/log/journal` and resides in memory
-        * none - no data is kept; all logs are dropped
+        * 2. persistent - data is stored to `/var/log/journal` hierarchy
+        * 3. volatile - data is only sent to `/run/log/journal` and resides in memory
+        * 4. none - no data is kept; all logs are dropped
       * Compress=
         * takes a boolean value
         * yes - is the default; data is compressed before written to disk
@@ -367,7 +371,6 @@ One of thee most important skills an administrator can have is system logging sk
         * both of these relate to the amount of space that the journal will occupy
         * SystemMaxUse pertains to the physical disk space the journal can use; the default is 10%
         * RuntimeMaxUse pertains to the amount of RAM the journal can use; the default is 10%
-
       * SystemMaxFileSize=, RuntimeMaxFileSize=
         * these act like a quota setting for how large individual journal files can get
         * NOTE: this does not apply to the journal directory
@@ -379,6 +382,7 @@ One of thee most important skills an administrator can have is system logging sk
         * the default is 0 (off)
         * it is set by a number and an unit like years months weeks days h or m
         * the default is s seconds
+        * this setting is disabled by default
 
 * ### `journalctl`
   * ##### `journalctl`
@@ -402,16 +406,28 @@ One of thee most important skills an administrator can have is system logging sk
     * `systemd-cat` will allow you to add your own text/notes to the journal
       * eg: `echo "Hello, you!" | systemd-cat`
       * then when you run `journalctl -r` you will see the echo string right there!
+      * just like `logger` from syslog
+      * this is great to use for scripting messages you want to add to syslog
     * `-x` means to give some extra explanation about stuff
       * this uses catalog service entries to match up events with documentation
+      * this gives us extra information along with a journal entry
+      * gives some trouble shooting help
+      * eg: `journalctl -rx`
+      * basically give you info about how to solve problems?
     * `-k` means to just show us the kernel ring buffer
-    * `-b` sow all of the journal entries that have been collected since the most recent system boot up
+    * `-b` show all of the journal entries that have been collected since the most recent system boot up
     * `--list-boots` will show a listing of recorded boot sessions
       * the journal must be persistent to the disk for this to work
       * this is useful for security audits
+      * `journalctl -b $BOOTNUMBER` <-- this will show you the boot log
     * `--since` and `--until` (must be able to be written to disk)
+      * date format is `2019-02-04 12:38:00`
+      * if not time is used then 00:00:00 is used
+      * can also use "yesterday", "today" and "now"
     * `--disk-usage`
+      * this will show how much disk space the journal is using
     * `--rotate`
+      * this will force a rotation of the logfiles based on the MaxRetentionSec?
 
 ## 108.3 Mail Transfer Agent (MTA) Basics
 * ### Basics of a Message Transfer Agent
