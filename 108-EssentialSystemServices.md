@@ -431,9 +431,9 @@ One of thee most important skills an administrator can have is system logging sk
 
 ## 108.3 Mail Transfer Agent (MTA) Basics
 * ### Basics of a Message Transfer Agent
-  * What is an MTA?  It is a program(service) that routes email to its intended destination
+  * What is an Message Transfer Agent(MTA)?  It is a program(service) that routes email to its intended destination
   * the MTA will send the message to a Message Delivery Agent (MDA) via port 25
-  * then the MDA will send the mail to the Message User Agent (Email Client), when it makes a request for new mail
+  * then the MDA will send the mail to the Message User Agent (MUA) (Email Client), when it makes a request for new mail
   * MTA Software Offerings
     * sendmail - is one of the oldest MTA systems around
       * this used to be the default on many Linux distros
@@ -490,15 +490,13 @@ One of thee most important skills an administrator can have is system logging sk
     * simply add your external email address to the file
     * any system emails that get sent to the user will be forwarded to the email listed in the `~/.forward` file
 
-
-
 ## 108.4 Manage Printers and Printing
 ### The Common Unix Printing System (CUPS)
 
 What does the interface consist of?
 * set up a virtual printer to send stuff to a pdf document
 * install pdf driver along with cups service
-  * `sudo apt-get install cupst printer-driver-cups.pdf`
+  * `sudo apt-get install cups printer-driver-cups.pdf`
 
 How do we add and remove printers?
   * you can use a web interface on a desktop computer to set up cups
@@ -554,7 +552,7 @@ How can we configure CUPS?
     * `-m` will specify the device driver to use
       * if you do not have one, you can use "everywhere"
       * this will search for a device driver that you can use for the printer
-    * eg: `lpadmin -p ENVY 4510 -L "downstairs office" -v socket://192.168.0.8:9100
+    * eg: `lpadmin -p ENVY 4510 -L "downstairs office" -v socket://192.168.0.8:9100 -m everywhere`
       * hp printers use port 9100; commit this to memory
     * to go back and add the proper driver for the printer do a search for the drivers:
       * this will search the local cups database for a postscript printer description (ppd)
@@ -577,9 +575,12 @@ How can we configure CUPS?
     * `lpc status` will show us all our printers on the system
 
   * ##### `lpr`
+    * lpr means "Line Printer Remote protocol"?
+      * I am going to call it "Line Print Run" to help me remember
     * this will print documents from the command line
     * `lpr /etc/passwd` <= this will print to the default printer
-    * `lpr -p ENVY-4512 /etc/passwd` <= this specifies the printer to print to
+    * `lpr -P ENVY-4512 /etc/passwd` <= this specifies the printer to print to
+      * note that this is a capital P to be used when specifying the destination printer with lpr
     
   * ##### `lpq`
     * this is to view the print queue of your printer
@@ -592,8 +593,14 @@ How can we configure CUPS?
 
   * ##### `cupsreject`
     * no new jobs will be able to be sent to a printer
-    * eg: `cupsreject ENVY-4512`
+    * they will be rejected before they get to the queue
+    * eg: `cupsreject ENVY-4512` 
+    * good for long term down time
+      * the opposite command is `cupsaccept`
 
   * ##### `cupsdiable`
     * disable printing on a printer from a server
+    * jobs will just stay in the queue with no printer to print them
     * eg: `cupsdiable ENVY-4512`
+    * good for short term down time
+      * the opposite setting is `cupsenable`
