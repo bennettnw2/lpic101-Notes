@@ -29,7 +29,7 @@ What is important to note here is to learn how these shells are created.  More s
       * it does this by simply talking to `/etc/bashrc`
   * Then you have a running shell!
 
-#### What happens when you fire up terminal from you Ubuntu dist?
+#### What happens when you fire up terminal from you Ubuntu dist? (Non-Login Shell)
   * you begin from a graphical desktop
   * `~/.bashrc` is the first file that is called
   * it still then reaches out to `/etc/bashrc`

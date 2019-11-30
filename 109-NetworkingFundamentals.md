@@ -238,10 +238,10 @@
         * `ifconfig eth0 192.168.122.250`
         * however this is a temporary assignment that will not persist through a reboot
 
-    * ##### `ifup`
+    * ##### `ifup etho0`
       * this command is used to bring up a specific network interface
 
-    * ##### `ifdown`
+    * ##### `ifdown eth0`
       * this command is used to bring down a specific network interface
 
     * ##### `route`
@@ -250,6 +250,8 @@
       * the current `ip route` command does the same thing but better
         * you can delete routes just like the newer command
         * `route del ROUTENAME`
+      * `route add -net 192.168.10.0 netmask 255.255.255.0 gw 192.168.1.22.25`
+        * this will add another route to your routing table
 
 ## 109.3 Basic Network Troubleshooting
 * ### Testing Connectivity
