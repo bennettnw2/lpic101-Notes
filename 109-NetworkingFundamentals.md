@@ -254,7 +254,7 @@
         * this will add another route to your routing table
 
 ## 109.3 Basic Network Troubleshooting
-* ### Testing Connectivity
+### Testing Connectivity
 
   * ##### `ping`
     * this is used to test a system's ability to communicate with another network device

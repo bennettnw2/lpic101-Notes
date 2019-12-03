@@ -5,7 +5,7 @@
     * ##### `who`
       * this will list the users currently logged into a system
       * it also displays what terminal they are using and what time they logged in
-      ```
+      ```bash
       root tty1     2019-10-01 08:30
       ```
 
@@ -54,13 +54,13 @@
           * a user is just specified as the username `bennettnw2`
       * just need to know how to set limits on:
         * CPU time
-          * `cpu`
+          * `cpu -t`
           * set in minutes but not concurrent minutes but cumulative on a process
           * can set hard or soft limits
         * concurrent logins
-          * `maxlogins`
+          * `maxlogins -u`
         * amount of memory a user process can use.
-          * `memlock`
+          * `memlock   -l`
 
       * `passwd` 107.1
 
