@@ -132,14 +132,15 @@
 
   * assume a user went away on vacation; we want to lock the account
     * you can use the `usermod` command to lock the user's password
-      * example needed
+      * eg: `usermod -L avance`
     * we can also lock the account with the usermod command by setting the expired date to the number 1
+      * eg: `usermod -e 1`
     * use the `getent` command to check out the shadow database file for the changes we just made
     * you should see an exclamation point at the beginning of the entry showing that the password has been locked
     * near the end you will see an expiration date of 1 which effectively disables the account
     * The account still has access to a login shell some how
       * we need to change the login shell to a no-login shell
-      * example needed
+      * eg: `usermod -s /sbin/nologin avance`
     * If we try to login with this user, we will see that we will not get in with the account
     * To re-enable the account:
       * example needed except the login shell
