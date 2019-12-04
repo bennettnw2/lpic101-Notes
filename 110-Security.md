@@ -136,11 +136,14 @@
     * we can also lock the account with the usermod command by setting the expired date to the number 1
       * eg: `usermod -e 1`
     * use the `getent` command to check out the shadow database file for the changes we just made
+      * eg: `getent shadow avance`
     * you should see an exclamation point at the beginning of the entry showing that the password has been locked
-    * near the end you will see an expiration date of 1 which effectively disables the account
+      * near the end you will see an expiration date of 1 which effectively disables the account
+      * eg: `avance:!$6$8xhLKYmd$17i4cRfYyioY0KspqutzbdvMyTiTEGO06soAgyfec:18217:0:99999:7::1:`
     * The account still has access to a login shell some how
       * we need to change the login shell to a no-login shell
       * eg: `usermod -s /sbin/nologin avance`
+      * running the above command will give us a passwd entry with `nologin` as the shell switch
     * If we try to login with this user, we will see that we will not get in with the account
     * To re-enable the account:
       * example needed except the login shell
@@ -172,6 +175,8 @@
         * the root user can change anyone's password
         * the permissions on these two files should never be changed
         * you should be aware of these default permissions for the exam
+          * /etc/passwd = 0644
+          * /etc/shadow = 0600
         * sometimes the default permissions can be different from distro to distro
         * it is good to know that the default permissions 
 
@@ -200,19 +205,53 @@
       * ##### `/etc/xinetd.conf`
         * the config file for xinetd is `/etc/xinetd.conf
         * there are logging settings for `xinetd`
-          * each service that `xinetd` covers will get its own log file
+          * each service that `xinetd` covers will get its own log file in `/etc/xinetd.d/`
         * we can restrict access to certain services
+        ```bash
+        # Define access restriction defaults
+        #
+        #       no_access       =
+        #       only_from       =
+        #       max_load        = 0
+                cps             = 50 10
+                instances       = 50
+                per_source      = 10
+        ```
           * `cps` means connections per second
             * eg: `cps      = 50 10`
             * means, if more than 50 connections per second are requested of the service, disable the service for 10 seconds
           * `instances = 50` means we can have up to 50 instances of a particular service
           * `per_source = 10` means no more than 10 incoming source IP addresses
-          * we also see that the file `/etc/xinetd.d` is referenced and included into this config file
+          * we also see that the file `/etc/xinetd.d` is referenced and included into this config file at the very end of the file
+          ```bash
+          includedir /etc/xinetd.d
+          ```
 
       * ##### `/etc/xinetd.d/`
         * this contains the configuration files for the network services that `xinetd` controls
+        ```bash
+        # ls /etc/xinetd.d/
+        chargen-dgram   daytime-stream  echo-dgram     time-dgram
+        chargen-stream  discard-dgram   echo-stream    time-stream
+        daytime-dgram   discard-stream  telnet
+        ```
         * `telnet` for example 
           * you can check this config file with `vim /etc/xinetd.d/telnet`
+          ```bash
+          # default: on
+          # description: The telnet server serves telnet sessions; it uses \
+          #       unencrypted username/password pairs for authentication.
+          service telnet
+          {
+                  flags           = REUSE
+                  socket_type     = stream
+                  wait            = no
+                  user            = root
+                  server          = /usr/sbin/in.telnetd
+                  log_on_failure  += USERID
+                  disable         = yes
+          }
+          ```
           * fyi, telnet is deprecated as it does not encrypt transmissions
           * this file will tell us:
             * the name of the service
