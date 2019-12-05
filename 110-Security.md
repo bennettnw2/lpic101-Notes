@@ -356,7 +356,8 @@
       * next move into the .gnupg file to create your public key you will give to another person
       * `gpg -o avancepubkey --export 16FECFF5`
         * the -o means to output a name of the public key
-        * the --export will use the private? key you just made to connect the `avancepubkey` together
+        * the --export will use the private key you just made to make a public key that will connect the `avancepubkey` together
+          * it is like makeing a special public key to your private lock?
 
     3. Exchange keys
     4. Import Keys into your keyrings
