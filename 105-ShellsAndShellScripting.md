@@ -50,10 +50,12 @@ What is important to note here is to learn how these shells are created.  More s
   * This file will set up your $PATH environment variable
   * This file will also set up your bash history size
   * It sets up the umask value
+
 ##### `~/.bash_profile` or `~/.profile` file
   * Remember: this file gets called after `etc/profile`
   * The first this this file does is to call the `~/.bashrc` file
   * This file will set up my environment variable for my path and then exports the path 
+
 ##### `~/.bashrc`
   * calls on the file `/etc/bashrc` and then pulls in global definitions that have been set up, server wide
     * what are global definitions?  custom functions, aliases and the like that have been set up for the server as a whole
@@ -203,13 +205,14 @@ Why would I want to add logical operators to my shell scripts?
         echo "/nodir does not exist"
       fi
       ```
-      * can use -f to test for a file existed and is a regular file
+      * can use -f to test if a file exists and is a regular file
 
   * ##### `test`
     * with using `test` you do not need brackets for your conditions
     * the brackets actually represent this `test` command
       * so when you see brackets you can think, "this is a test"
-    * the `-e` option below means to test for existence period
+    * the `-e` option below means to test for *e*xistence of a file, period
+    * the file can be a directory, a socket, anything that linux considers a file which is everything
     ```bash
     if test -e /etc/hosts; then
       echo "This file exists"
@@ -281,9 +284,9 @@ Why would I want to add logical operators to my shell scripts?
     * NOTE: be careful that you do not run into any logical errors
       * a logical error is an error in the logic of a script or program
       * it is not like a syntatical error in that a syntatical error will not allow a program to run
-      * you will get some sort of error at runtime
+        * you will get some sort of error at runtime
       * a logical error is one where the script compiles just fine but the output is not what you expect it to be.
-      * It is an error in the creation of the thinking of the program and not the program itself
+        * It is an error in the creation of the thinking of the program and not the program itself
 
   * ##### `elif` (else-if)
     ```bash
@@ -340,7 +343,7 @@ This section is all about how to repeat commands using
     echo "$i"
   done
   ```
-  * command substitution is when you run a command within another command, and the output of the first command is used as input for another command
+  * command substitution is when you run a command within another command, and the output of the first command is used as input for the other command
   * in the above case we are using the output of the ls command on the /opt directory as input to be use for the for loop
   * command substitution is used/formatted in two different ways
     1. enclose the command you are going to run with `$( )`

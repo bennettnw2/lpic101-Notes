@@ -127,7 +127,7 @@
     * you can test the new config file with `X -config /root/xorg.conf.new`
     * you will be greeted by a blank screen with an "X" shaped cursor
     * this is because no applications have sent any instructions to the x server to draw anything
-    * but we know it works!  You can exit out of it with ctl-alt-delete
+    * but we know it works!  You can exit out of it with ctl-alt-backspace
     * then you can copy the new config file to its proper place of `/etc/X11/xorg.conf`
 
   * ##### `xdpyinfo`
