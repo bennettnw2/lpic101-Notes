@@ -26,6 +26,9 @@ We are going to learn how to create new users for our system.
   * this command will set a password for a specific user
   * this command can also be used by a user to change their password
   * `-e` will force expire a password so that it will be prompted to change on the next use
+    * note this command/option combo must be run as root and it will look like:
+    * eg: `passwd -e nbennett`
+    * again, this will force nbennett to change their password once they login again
 
 * ##### `userdel`
   * this command will remove the user but will keep their home folder
@@ -76,6 +79,7 @@ We will take a look at what happens at the system level when managing users and 
     * root account; system service accounts; and user accounts
     * the only user that can modify `etc/passwd` is the root account
     * other users do need read access to the file to be able to log into the system 
+      * NOTE: the permissions are 644 for `/etc/passwd`
   * what is contained in `etc/passwd`?
     * each line contains information about one system account
     * : (colons) are used to separate each field in a file
@@ -89,6 +93,7 @@ We will take a look at what happens at the system level when managing users and 
     * the layout of the etc shadow file is very similar to that of the `/etc/passwd`
     * the first field contains the username and the second field contains an encrypted password
     * the password will show the algorithm used, the salt used, and the hashed password
+      * these values are all separated by a $ symbol
     * the next field shows how many days since the epoch that the password was changed
       * UNIX Epoch is January 1, 1970
       * this time is the standard used to calculate modification times
@@ -115,9 +120,9 @@ We will take a look at what happens at the system level when managing users and 
         * if is is blank then the user listed in the only member of the group with the same name
         * if there are multiple users, they will be separated by a comma 
 
-   * ##### `/etc/skel`
+  * ##### `/etc/skel`
     * add files and folders to this directory so that when a new user gets created on a system, they get the same default set of folders and files each time
-    * files like default .bash_profile, .bashrc etc.
+    * files like default `.bash_profile`, `.bashrc`, etc.
     * default shared folders they need access to
 
   * ##### `/etc/default/useradd`
@@ -142,6 +147,7 @@ We will take a look at what happens at the system level when managing users and 
     * So how does `useradd` assign a UID of 1000+? 
       * can view the `/etc/login.defs` to view default configs for user creation with useradd
       * the settings in this file overrides the default behaviour of `/etc/default/useradd`
+      * this is where you would make changes for the default configs for user creation
 
 * What does this data do?
 
@@ -159,7 +165,7 @@ In this section we will work with local user and group account by modifying thei
   * eg: `usermod -s /bin/tcsh bcalhoun` will change the default shell of the user "bcalhoun"
   * you can then use `getent passwd bcalhoun` to view his line entry in `/etd/passwd`
     * this will confirm the change for you
-  * eg: `usermod -aG engineers bcalhoun` 
+  * eg: `usermod -aG engineering bcalhoun` 
     * this will -append the -Group "engineers" to bcalhoun's secondary groups
     * if you do not use the -a switch, the action would be an overwrite of the secondary groups
     * remember: with `useradd` and `usermod`, -g mean primary group and -G means secondary group
@@ -191,8 +197,19 @@ In this section we will work with local user and group account by modifying thei
     * `-E` means -Expires on this [date]
   * `chage -l bcalhoun`
     * `l` means to -list the parameters of the user's password options
+    ```bash
+    $ chage -l bcalhoun
+    Last password change                    					: Aug 22, 2019
+    Password expires				                         	: never
+    Password inactive					                        : never
+    Account expires					                          : never
+    Minimum number of days between password change		: 0
+    Maximum number of days between password change		: 99999
+    Number of days of warning before password expires	: 7
+    ```
   * `chage -E -1 bcalhoun` will remove any expiration date to a user's password `-1` 
   * `chage -W 14 bcalhoun` will change the days before expiration warning; WARN DAYS
+  * In summary, any option you see in the command `chage -l` can be modified with the `chage` command
 
 * ##### `groupmod`
   * this command can modify attributes of an existing group such as name, GID, etc
@@ -235,7 +252,7 @@ We learn how to use a cron table so you can schedule repeatable tasks
     * this will typically use vi as the editor of choice
     * you can set your EDITOR environment variable to the editor of your choice
   * example of backing up a documents folder each week ever sat at 5 am
-    * 0 5 * * sat bennettnw2 /usr/bin/tar -cfz documents-$(/bin/date +%F).tar.gz Documents
+    * `0 5 * * sat bennettnw2 /usr/bin/tar -cfz documents-$(/bin/date +%F).tar.gz Documents`
       * it is best practice to list your username even though it is not needed
       * you will also want to have the full path to the command
       * cron runs in its own shell so it is best to be as explicit as possible
@@ -257,10 +274,12 @@ We learn how to use a cron table so you can schedule repeatable tasks
     * they are ran at the intervals noted after the .
     * these are not really cron tables per se but just scripts in a file
     * this is handy to use if you want to drop a script into one of these and have them run accordingly
-  * `/etc/cron.d` is a crontable for system jobs
+  * `/etc/cron.d` is a crontab table file for system jobs
     * these need to be in a cronjob format with the seconds / hours / date / month / dayofweek
   * `/etc/cron.deny` will deny users listed in this file from using crontabs
-    * simply list their name (one per line?)
+    * simply list their username, one per line
+  * `/etc/cron.allow` will allow users listed to create crontabs
+    * be careful, if this file exists and is empty, it will prevent all non-root users from creating cronjobs
 
 ### At
 This utility will run a task at a later time and will only run once.
