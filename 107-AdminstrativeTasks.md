@@ -314,8 +314,7 @@ This utility will run a task at a later time and will only run once.
   * `at 4:00 AM tomorrow`
     * will run a job at 4AM the next day
   * `at -f /path/to/file.sh 10:15 PM Oct 8` 
-    * ##### `-f`
-      * this flag will let you specify a script to run
+    * `-f` <- this flag will let you specify a script to run
 
 ### Systemd Timer Unit Files
 The timer unit is a timer that is controlled directly by systemd.
@@ -356,8 +355,8 @@ This is done so that there can be uniformity with the unit file configuration sy
 * Unit= is the service unit
 * [Install]
   * WantedBy=timers.target
-* Timer Unit Files will typically have the same name as their service unit file 
-  * eg: web-backup.service and web-backup.timer
+  * Timer Unit Files will typically have the same name as their service unit file 
+    * eg: web-backup.service and web-backup.timer
 
 * ##### `systemctl list-timers --all`
   * list out all the timers in a system
