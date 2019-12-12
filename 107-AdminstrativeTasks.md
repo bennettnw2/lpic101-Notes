@@ -392,12 +392,12 @@ WantedBy=multi-user.target
 
 ### Working with the System's Locale
 This is important if you are working on Linux systems around the world
-By modifying a system's locale you get get it to use different character encodings and keyboards
+By modifying a system's locale you can get it to use different character encodings and keyboards
 * ##### `locale`
   * this will show you the system's `locale` settings
   * things like encoding type and language
   ```
-  LANG=en US.UTF-8
+  LANG=en_US.UTF-8
   LC_NUMERIC="en_US.UTF-8"
   ...
   LC_ALL
@@ -414,14 +414,14 @@ By modifying a system's locale you get get it to use different character encodin
   * this will set the default system language and character encoding
   * example of the output from running `localectl`
   ```
-  System Locale: LANG=en_US.USF-8
+  System Locale: LANG=en_US.UTF-8
       VC Keymap: us
      X11 Layout: us
   ```
-  * ##### `localectl list-locale`
+  * ##### `localectl list-locales`
     * this will list out all the different available locales
     * `locale -a` will also provide the same output
-      * however, `localectl list-locale` provides a pager by default
+      * however, `localectl list-locales` provides a pager by default
     * with this output you will notice that there are two options for encoding
     * example output:
     ```
@@ -443,6 +443,7 @@ By modifying a system's locale you get get it to use different character encodin
     * it is made up of 15 parts
     * iso88592 is one of them
       * this is commonly used in central European countries
+    * *Remember* that you can use any of these iso8859[1-15] to set the encoding for a user's specific country
 
   * ##### `UTF-8`
     * remember that this is the 8-bit character encoding standard of Unicode
@@ -457,7 +458,8 @@ What if you had a file that you did not know the encoding to?
 ```
 * ##### `iconv`
   * this is a utility that can be used to convert files from once char encoding to another
-  * eg: `iconv -f ISO-8859-1 -t UTF-8 -o newfile.txt original file 
+  * eg: `iconv -f ISO-8859-1 -t UTF-8 -o newfile.txt original file`
+    * -f means encoding from; -t means encoding to; -o means output of file; then you have the file to operate on?
 
 What if I wanted to set this and have it be permanent?
 * `localectl set-locale el_GR.iso88597`
@@ -512,6 +514,10 @@ NTP synchronized: no
   * `date -s "12/1/2019 12:00:00"`
   * this only temporary though until after a restart
   * after a restart it will revert back to the RTC (hardware) clock or the time supplied by the NTP server
+
+* You can set the date and chage the RTC(Real Time Clock) by running:
+  * `date set-time "2020-01-01 00:00:00"`
+  * this will not persist though if NTP is enabled.  NTP will override
   
 * How do set a timezone?
   * `timedatectl set-timezone`
