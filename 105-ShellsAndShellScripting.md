@@ -53,7 +53,7 @@ What is important to note here is to learn how these shells are created.  More s
 
 ##### `~/.bash_profile` or `~/.profile` file
   * Remember: this file gets called after `etc/profile`
-  * The first this this file does is to call the `~/.bashrc` file
+  * The first thing this file does is to call the `~/.bashrc` file
   * This file will set up my environment variable for my path and then exports the path 
 
 ##### `~/.bashrc`

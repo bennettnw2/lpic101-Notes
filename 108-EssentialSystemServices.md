@@ -188,7 +188,7 @@ One of thee most important skills an administrator can have is system logging sk
       * the fields are as follows
         * Date&TimeStamp 
         * Hostname for system that generated the log message (logs can come from different hosts)
-        * Item that generated the log
+        * User that generated the log
           * if you see brackets with a number, that is the PID
         * last is the message of the event
 
@@ -213,6 +213,37 @@ One of thee most important skills an administrator can have is system logging sk
     * the config file for `rsyslog` is located here
     * this file is very self explanatory
     * there are even html files you can view for more documentation
+    ```bash
+    #### RULES ####
+
+    # Log all kernel messages to the console.
+    # Logging much else clutters up the screen.
+    #kern.*                                                 /dev/console
+
+    # Log anything (except mail) of level info or higher.
+    # Don't log private authentication messages!
+    *.info;mail.none;authpriv.none;cron.none                /var/log/messages
+
+    # The authpriv file has restricted access.
+    authpriv.*                                              /var/log/secure
+
+    # Log all the mail messages in one place.
+    mail.*                                                  -/var/log/maillog
+
+
+    # Log cron stuff
+    cron.*                                                  /var/log/cron
+
+    # Everybody gets emergency messages
+    *.emerg                                                 :omusrmsg:*
+
+    # Save news errors of level crit and higher in a special file.
+    uucp,news.crit                                          /var/log/spooler
+
+    # Save boot messages also to boot.log
+    local7.*                                                /var/log/boot.log
+
+    ```
     * you can also view `man rsyslog.conf` for more info
       * review the BASIC STRUCTURE of the man file
     * the `#### RULES ####` section of `rsyslog.conf` will dictate which log messages go where
@@ -351,7 +382,49 @@ One of thee most important skills an administrator can have is system logging sk
     * you can control the size of the journal in the journal config file
       * `/etc/systemd/journald.conf` is the location of the journal config file
       * `man 5journald.conf`
+      ```bash
+      $ cat /etc/systemd/journald.conf
+      #  This file is part of systemd.
+      #
+      #  systemd is free software; you can redistribute it and/or modify it
+      #  under the terms of the GNU Lesser General Public License as published by
+      #  the Free Software Foundation; either version 2.1 of the License, or
+      #  (at your option) any later version.
+      #
+      # Entries in this file show the compile time defaults.
+      # You can change settings by editing this file.
+      # Defaults can be restored by simply deleting this file.
+      #
+      # See journald.conf(5) for details.
 
+      [Journal]
+      #Storage=auto
+      #Compress=yes
+      #Seal=yes
+      #SplitMode=uid
+      #SyncIntervalSec=5m
+      #RateLimitInterval=30s
+      #RateLimitBurst=1000
+      #SystemMaxUse=
+      #SystemKeepFree=
+      #SystemMaxFileSize=
+      #RuntimeMaxUse=
+      #RuntimeKeepFree=
+      #RuntimeMaxFileSize=
+      #MaxRetentionSec=
+      #MaxFileSec=1month
+      #ForwardToSyslog=yes
+      #ForwardToKMsg=no
+      #ForwardToConsole=no
+      #ForwardToWall=yes
+      #TTYPath=/dev/console
+      #MaxLevelStore=debug
+      #MaxLevelSyslog=debug
+      #MaxLevelKMsg=notice
+      #MaxLevelConsole=info
+      #MaxLevelWall=emerg
+      #LineMax=48K
+      ```
     * [Journal]
       * Storage=
         * this setting will determine whether to store the log on the disk or in memory
@@ -451,8 +524,32 @@ One of thee most important skills an administrator can have is system logging sk
     * the aliases on the left are users on the system (both system users and user users)
     * then you have a colon
     * then you have the user that will receive that email
-      * eg: `bin: root`  or `root:  nygel` <= this will send roots email to the user nygel 
+      * eg: `bin: root`  or `root:  nygel` <= this will send root's email to the user nygel 
     * so the account on the right will received messages from the accounts on the left
+    ```bash
+    $ cat /etc/aliases
+    #
+    #  Aliases in this file will NOT be expanded in the header from
+    #  Mail, but WILL be visible over networks or from /bin/mail.
+    #
+    #	>>>>>>>>>>	The program "newaliases" must be run after
+    #	>> NOTE >>	this file is updated for any changes to
+    #	>>>>>>>>>>	show through to sendmail.
+    #
+
+    # Basic system aliases -- these MUST be present.
+    mailer-daemon:	postmaster
+    postmaster:	root
+
+    # General redirections for pseudo accounts.
+    bin:		root
+    daemon:		root
+    adm:		root
+    lp:		root
+    sync:		root
+    shutdown:	root
+    halt:		root
+    ```
   * `newaliases`
     * be sure to run this command after modifications to the /etc/aliases file is made
     * this command will then regenerate the `/etc/aliases.db` file

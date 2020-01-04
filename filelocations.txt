@@ -1,0 +1,83 @@
+/etc/profile also pulls in configs from /etc/profile.d
+/etc/profile.d to make changes to a shell environment
+/etc/profile will then make the configs taken from /profile.d/ apart of itself
+
+/etc/bashrc then pulls in global definitions that have been set up, server wide
+/etc/skel
+
+/etc/hosts
+/etc/mytest 
+/etc/X
+/etc/inittab file
+/etc/systemd/system/default.target
+/etc/systemd/system/display-manager.service
+/etc/passwd
+/etc/shadow
+/etc/group
+/etc/default/useradd - location of the default settings for useradd
+/etc/skel - location of the skeleton directory
+/etc/login.defs - to view default configs for user creation with useradd
+
+/etc/crontab
+/etc/cron.hourly
+/etc/cron.daily
+/etc/cron.weekly
+/etc/cron.monthly
+/etc/cron.d is a crontab table file for system jobs
+/etc/cron.deny will deny users listed in this file from using crontabs
+/etc/cron.allow will allow users listed to create crontabs
+/etc/at.allow
+/etc/at.deny
+/etc/cron.deny
+/etc/cron.allow
+
+/etc/localtime will hold this information
+/etc/timezone 
+/etc/ntp.conf
+/etc/chrony.conf
+/etc/chrony/chrony.conf
+
+/etc/rsyslog.conf
+/etc/rsyslog.d
+/etc/rsyslog.conf you will want to comment out the proper rules
+/etc/logrotate.conf this will trigger the logrotate daemon to run
+/etc/logrotate.d
+/etc/logrotate.conf  -f
+
+/etc/systemd/journald.conf is the location of the journal config file
+/etc/aliases is the file you will want to work with in order to get email forwarding to work
+/etc/aliases.db is the file that the MTA uses for mail delivery
+
+/etc/cups
+/etc/hostname and runtime-wise /proc/sys/kernel/hostname
+/etc/hostname will remain unchanged
+/etc/hosts and it says, "You are here."
+/etc/resolv.conf on it. 
+/etc/nsswitch.conf which apparently empowers /etc/resolv.conf with more powers
+/etc/nsswitch.conf
+
+/etc/hosts
+/etc/hostname
+/etc/resolv.conf
+/etc/nsswitch.conf
+/etc/hosts and /etc/hostname
+/etc/security/limits.conf file
+/etc/sudoers
+/etc/nologin file
+
+/etc/passwd
+/etc/shadow
+
+/etc/xinetd.conf
+/etc/xinetd.d is referenced and included into this config file at the very end of the file
+/etc/xinetd.d/telnet
+/etc/init.d/xinetd start
+/etc/init.d/xinetd restart
+/etc/hosts.allow file
+
+/etc/ssh/sshd_config
+/etc/ssh/ssh_host_rsa_key
+/etc/ssh/ssh_host_dsa_key
+/etc/ssh/ssh_host_ecdsa_key
+/etc/ssh/ssh_host_ed
+/etc/ssh/ folder we will see the key files that are used for encryption algorithims

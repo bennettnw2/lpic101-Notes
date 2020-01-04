@@ -392,16 +392,28 @@ WantedBy=multi-user.target
 
 ### Working with the System's Locale
 This is important if you are working on Linux systems around the world
-By modifying a system's locale you can get it to use different character encodings and keyboards
+By modifying a system's locale you can get it to use *different character encodings and default language*
 * ##### `locale`
   * this will show you the system's `locale` settings
   * things like encoding type and language
   ```
-  LANG=en_US.UTF-8
-  LC_NUMERIC="en_US.UTF-8"
+  LANG=en_US.UTF-8  determines default lcoale in absense of other locale related env variables
+  LANGUAGE          this sets how system messages are translated; no formatting
+  LC_NUMERIC        how numbers are formatted
+  LC_TIME           how time is displayed
+  LC_MONETARY       how money is diplayed
+  LC_PAPER          how paper sizes are displayed
+  LC_ADDRESS        how addresses are formatted
+  LC_TELEPHONE      how telephone numbers are formatted
+  LC_MEASUREMENT    default measurement system used in the region
+  LC_IDENTIFICATION
   ...
   LC_ALL
   ```
+Normally how `locale` works is you set `LANG` to your preferred locale.  If there are some aspects of your primary locale that you don't like (date formats) then you can set specific variable to override those features (above) only.  You do not want to set the LC_ALL variable, at least not permanently.  It is reserved for situation where you need to enforce a specific locale (usually "C") on a temporary basis.
+  * one example of this would be reporting error messages on an English-speaking mailing list; you can use `LC_ALL=C your command` to ensure that the errors are in English and follow all the POSIX norms.
+
+
 * ##### `UTF-8`
   * is a character encoding type
   * it is an encoding standard that includes
@@ -435,6 +447,7 @@ By modifying a system's locale you can get it to use different character encodin
     * now when you run the `locale` command, you will see "pl_PL.utf8" on all the options
     * now all system messages are in polish
     * but the man pages are not in polish unless you install the polish man pages
+      * eg: `yum -y install man-pages-pl`
       * NOTE: you may need to install language packs for certain applications to match the setting for the system.
 
 * #### Character Encoding
@@ -459,10 +472,12 @@ What if you had a file that you did not know the encoding to?
 * ##### `iconv`
   * this is a utility that can be used to convert files from once char encoding to another
   * eg: `iconv -f ISO-8859-1 -t UTF-8 -o newfile.txt original file`
-    * -f means encoding from; -t means encoding to; -o means output of file; then you have the file to operate on?
+    * -f means encoding from; -t means encoding to; -o means output of file; then you have the file to operate on
 
 What if I wanted to set this and have it be permanent?
 * `localectl set-locale el_GR.iso88597`
+
+Summary for myself: you set the locale setting and the character encoding which can be UTF-8 or ISO-8859[1-15
 
 ### Time and Date on the Linux System
 We need to make sure that the time and date on a system stay correct.
@@ -486,7 +501,10 @@ We need to make sure that the time and date on a system stay correct.
     * or: `date +%D` => `09/14/19`
     * or: `date +%m%d%y` => `09/14/19`
       * you can use a capital letter and that will show the long version
-      * y = 19; Y = 2019 / a = Sat; A = Saturday
+      * %y = 19; %Y = 2019 / %a = Sat; %A = Saturday
+        * this convention not all that consistent though
+          * %d = day of month in number format; %D = a full date output %m/%d/%y
+          * %h is the same as %b (abbreviated month!); %H is the hour in 24 hour notation (00..23)
 
 * ##### `timedatectl`
   * this command will display the current date and time settings
@@ -515,13 +533,15 @@ NTP synchronized: no
   * this only temporary though until after a restart
   * after a restart it will revert back to the RTC (hardware) clock or the time supplied by the NTP server
 
-* You can set the date and chage the RTC(Real Time Clock) by running:
-  * `date set-time "2020-01-01 00:00:00"`
-  * this will not persist though if NTP is enabled.  NTP will override
+* You can set the date and change the RTC(Real Time Clock) by running:
+  * `sudo timedatectl set-time "2020-01-01 00:00:00"`
+  * this will not work though if NTP is enabled.  NTP will block the change
+    * `Failed to set time: Automatic time synchronization is enabled`
   
 * How do set a timezone?
+There is a directory at `usr/share/zoneinfo` and you just create a symbolic link from the desired timezone file from `/usr/share/zoninfo/` and link it to `/etc/localtime`
   * `timedatectl set-timezone`
-  * `timedatectl list-timezone`
+  * `timedatectl list-timezones`
   * `timedatectl set-timezone "Antartica/Davis"`
   * `timedatectl set-timezone "America/New_York"`
   * ##### `tzselect`
@@ -530,6 +550,7 @@ NTP synchronized: no
     * is is just a wizard to give you the variable to use in a script or to actually make the setting
   * ##### `TZ`
     * this is the environment variable you would set in order to change your timezone
+    * this is good for in a profile or a script
 
 * #### Time and Date Files
   * so how does a Linux system keep track of all this time and date data?
