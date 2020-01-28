@@ -8,3 +8,6 @@ Well, it has been 15 minutes so I am going to review some tagged flash cards and
 IDEA: Come up with my own lab(kata) of:
 * configuring network connections from scratch
 * pretty much check out the labs from LinuxAcademy and expand on those
+
+Tue Jan 28 13:16:07 EST 2020
+I need to commit to doing this at least once a day if I really want to crush this exam coming up...  ok on to work

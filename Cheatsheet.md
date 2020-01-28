@@ -120,4 +120,102 @@ What does the `route` command do?  What even is a route?  I think it is the path
 
 I still don't get it.  I guess I should get a grip on what is a route, for reals.  From [study-ccna.com](https://study-ccna.com/what-is-ip-routing/) says that *IP Routing* is the process of sending packets from a host on one network to another host on a different remote network.  That makes sense.  It continues to say that routing is done by routers (obvi) and that routers examine the destination IP address of a packet and then determines the next hop address to get the data closer to its destination.  Routers use a routing table to determine what the next hop will be to get the packet to the proper location.
 
+It seems to me that the route command adds, removes and just plain edits routing tables so that the computer will know where to send packets?  According to the man page, Yes!
 
+> **`route - show / manipulate the IP routing table`**
+> 
+> Route manipulates the kernel's IP routing tables.  Its primary use is to set up static  routes  to  specific hosts or networks via an interface after it has been configured with the ifconfig(8) program.
+> 
+> When the add or del options are used, route modifies the routing tables.  Without these options, route displays the current contents of the routing tables.
+
+For the exam I would need to know how to use the routing table to:
+* view and change routing tables
+* setting the default route using `iproute2`
+* be aware of any legacy route tools
+
+Q: what is the old way of configuring a routing table.  Seems to me that the new way is with `iproute2`
+A: It is just plain ol' route. from the man page again
+> This program is obsolete. For replacement check ip route.
+
+Well how do I view and change routing tables?
+`route` will display a routing table
+```
+$ route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         gw-li682.linode 0.0.0.0         UG    100    0        0 eth0
+23.239.9.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+```
+* Destination is the destination of the network or destination host
+* Gateway is the gateway address or '\*' if none is set
+* Genmask is the network mask for the destination net; 255.255.255.255 for a host destination and 0.0.0.0 for the default route
+* Flags can mean:
+  * U (route is up)
+  * H (target is a host)
+  * G (use gateway)
+  * R (reinstate route for dynamic routing)
+  * D (dynamically installed by daemon or redirect)
+  * M (modified from routing daemon or redirect)
+  * A (installed by addrconf)
+  * C (cache entry)
+  * !  (reject route)
+* Iface is the interface to which packets will be sent through for the specific route will be sent
+
+Not sure what all the above means still but it is ok.  Maybe subconsciously. I can build on the subconscious.
+
+How do I change a routing table?  You can delete or add an entry and that would look like:
+`route add -net 192.56.76.0 netmask 255.255.255.0 metric 1024 dev eth0`
+* the above adds a route to the local network 192.56.76.x via "eth0"
+or `route add -net 192.168.49.0 netmask 255.255.255.0 gw 192.168.1.25`
+* -net means the target is a network
+* -host means the target is a host
+* netmask is the netmask to be used when adding a network route
+* gw means to route packets via a gateway
+  * NOTE: the specified gateway must be reachable first.  This usually mans that you have to set up a static route to the gateway beforehand.  If you specify the address of one of your local interfaces, it will be used to decide about the interface to which the packets should be routed to.
+`route del default` will delete the default route which is labeled either "default" or "0.0.0.0" in the destination field of the current routing table
+
+Well that was fun, I still don't really understand what is going on and just have a vague Idea, maybe I'll watch some youTube videos...
+
+First I want to check out setting a default route with iproute2
+Basically, it is the same but a bit different syntax.  Instead of `route...`, the command will be `ip route...`. This reminds me of the `linode-cli` utility where you can build on commands.  `ip` is the base command and then you select the object you want to manipulate or create like, `addr`, `link`, `route`, `maddr` or `neigh`.  Then you select the command you want to run and the commands available to you differ depending on the object you select.  I think for the exam I'll only really need to know `addr`, `link` and `route`.
+
+For the differences between `route` and `iproute2`:
+* `route` would look like `route add -net 192.168.1.0 netmask 255.255.255.0 dev eth0`
+* `iproute2` would look like `ip route add 192.168.1.0/24 dev eth0`
+or
+`route add default gw 192.168.1.1` vs `ip route add default via 192.168.1.1`
+
+That is it for now.  I am going to give my brain a rest from the route command and work on configuring a network from scratch.  Maybe that will help to put things in perspective.
+
+******************************
+
+# Configuring a network from scratch
+Q: How do I even set up a cloud instance with no networking?  That's my first step...
+
+For now I am going to go over the first search result I found on [Opensource.com](https://opensource.com/life/16/6/how-configure-networking-linux)
+
+There are two startup services; `network` startup and `NetworkManager`  You can use your home computer as a router if you wanted to!
+
+##### Interface Configuration Files
+* Every network interface has its own config file in the `/etc/sysconfig/network-scripts` directory
+* Each interface has a configuration file name of, `ifcfg-<interface-name>-X`, where X is the number of the interface starting with 0 or 1 depending upon the naming convention in use.
+  * ie: `/etc/sysconfig/network-scripts/ifcfg-eth0` for the first ethernet interface
+* Each interface config file is bound to a specific physical network interface(device) by the mac address of the interface
+
+##### Network Interface Naming Conventions
+* there are different ways to name your interfaces like:
+  * eth0, eth1
+  * eno1
+  * enp0s3
+
+
+
+
+
+
+
+
+
+
+
+.
