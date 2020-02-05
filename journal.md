@@ -11,3 +11,7 @@ IDEA: Come up with my own lab(kata) of:
 
 Tue Jan 28 13:16:07 EST 2020
 I need to commit to doing this at least once a day if I really want to crush this exam coming up...  ok on to work
+
+Tue Feb  4 11:10:21 EST 2020
+Really, I need to study at least one hour each day; I have been to too many social events lately.  I think it is time to buckle down and not have friends for a time.  Ok for learning networking I am going to fire up a linode and break various functionality and then test and then fix and then test again.
+

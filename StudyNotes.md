@@ -196,26 +196,189 @@ For now I am going to go over the first search result I found on [Opensource.com
 
 There are two startup services; `network` startup and `NetworkManager`  You can use your home computer as a router if you wanted to!
 
-##### Interface Configuration Files
+### Interface Configuration Files
 * Every network interface has its own config file in the `/etc/sysconfig/network-scripts` directory
 * Each interface has a configuration file name of, `ifcfg-<interface-name>-X`, where X is the number of the interface starting with 0 or 1 depending upon the naming convention in use.
   * ie: `/etc/sysconfig/network-scripts/ifcfg-eth0` for the first ethernet interface
 * Each interface config file is bound to a specific physical network interface(device) by the mac address of the interface
 
-##### Network Interface Naming Conventions
+### Network Interface Naming Conventions
 * there are different ways to name your interfaces like:
   * eth0, eth1
   * eno1
   * enp0s3
 
+### Config File Examples
+
+This example network interface configuration file, `ifcfg-eth0`, defines a static IP address configuration for a CentOS 6 server installation.
+```
+# Intel Corporation 82566DC-2 Gigabit Network Connection
+DEVICE=eth0
+HWADDR=00:16:76:02:BA:DB
+ONBOOT=yes
+IPADDR=192.168.0.10
+BROADCAST=192.168.0.255
+NETMASK=255.255.255.0
+NETWORK=192.168.0.0
+SEARCH="example.com"
+BOOTPROTO=static
+GATEWAY=192.168.0.254
+DNS1=192.168.0.254
+DNS2=8.8.8.8
+TYPE=Ethernet
+USERCTL=no
+IPV6INIT=no
+```
+This file starts the interface on boot (ONBOOT=yes), assigns the interface a static IP address (IPADDR=), defined a domain and a network gateway, specifies two DNS servers, and does not allow not-root users to start and stop the interface.
+
+This next interface config file, `ifcfg-eno1`, provides a DHCP configuration for a desktop workstation.
+```
+TYPE=Ethernet
+BOOTPROTO=dhcp
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=no
+IPV6_AUTOCONF=no
+IPV6_DEFROUTE=no
+IPV6_FAILURE_FATAL=no
+NAME=eno1
+UUID=a67804ff-177a-4efb-959d-c3f98ba0947e
+ONBOOT=yes
+HWADDR=E8:40:F2:3D:0E:A8
+IPV6_PEERDNS=no
+IPV6_PEERROUTES=no
+```
+In this configuration file, the DHCP entries, IP adrdress, the search domain and all other network information are not defined because they are supplied by the DHCP server.  
+
+Note that in both interface configuration files, the HWADDR line specified the MAC address of the physical network interface.  If you change the network device, you will have to change this line in the configuration file.
+
+### Configuration Options
+* DEVICE: The logical name of the device, such as eth0 or enp0s2.
+* HWADDR: The MAC address of the NIC that is bound to the file, such as 00:16:76:02:BA:DB
+* ONBOOT: Start the network on this device when the host boots. Options are yes/no. This is typically set to "no" and the network does not start until a user logs in to the desktop. If you need the network to start when no one is logged in, set this to "yes".
+* IPADDR: The IP Address assigned to this NIC such as 192.168.0.10
+* BROADCAST: The broadcast address for this network such as 192.168.0.255
+* NETMASK: The netmask for this subnet such as the class C mask 255.255.255.0
+* NETWORK: The network ID for this subnet such as the class C ID 192.168.0.0
+* SEARCH: The DNS domain name to search when doing lookups on unqualified hostnames such as "example.com"
+* BOOTPROTO: The boot protocol for this interface. Options are static, DHCP, bootp, none. The "none" option defaults to static.
+* GATEWAY: The network router or default gateway for this subnet, such as 192.168.0.254
+* ETHTOOL_OPTS: This option is used to set specific interface configuration items for the network interface, such as speed, duplex state, and autonegotiation state. Because this option has several independent values, the values should be enclosed in a single set of quotes, such as: "autoneg off speed 100 duplex full".
+* DNS1: The primary DNS server, such as 192.168.0.254, which is a server on the local network. The DNS servers specified here are added to the /etc/resolv.conf file when using NetworkManager, or when the peerdns directive is set to yes, otherwise the DNS servers must be added to /etc/resolv.conf manually and are ignored here.
+* DNS2: The secondary DNS server, for example 8.8.8.8, which is one of the free Google DNS servers. Note that a tertiary DNS server is not supported in the interface configuration files, although a third may be configured in a non-volatile resolv.conf file.
+* TYPE: Type of network, usually Ethernet. The only other value I have ever seen here was Token Ring but that is now mostly irrelevant.
+* PEERDNS: The yes option indicates that /etc/resolv.conf is to be modified by inserting the DNS server entries specified by DNS1 and DNS2 options in this file. "No" means do not alter the resolv.conf file. "Yes" is the default when DHCP is specified in the BOOTPROTO line.
+* USERCTL: Specifies whether non-privileged users may start and stop this interface. Options are yes/no.
+* IPV6INIT: Specifies whether IPV6 protocols are applied to this interface. Options are yes/no.
+
+If the DHCP option is specified, most of the other options are ignored. The only required options are BOOTPROTO, ONBOOT and HWADDR. Other options that you might find useful, that are not ignored, are the DNS and PEERDNS options if you want to override the DNS entries supplied by the DHCP server.
+
+******************************
+
+I am launching a Linode and breaking and fixing stuff related to networking.  Here are my thoughts and notes for future me.
+* installing `lynx`
+  * `dnf config-manager --set-enabled PowerTools`
+  * `dnf -y install lynx`
+
+Lynx works just fine and although I could not go to google.com, (too many request error), I went to [nygel.ninja](http://nygel.ninja) instead
+
+I am using the Linux in Action boot and the chapter for network trouble shooting.  It starts with talking about TCP/IP, NAT addressing, Subnets and network masks.  Then it presents a scenario of having to go and trouble shoot a network.
+
+Things to check in order from closeset to you to furthest from you.
+1. IP Address
+2. Router
+3. DNS
+4. Actual Internet is Down
+
+##### 1. IP Address
+How to check the IP Address
+* Interface
+  * `ip address` | `ip addr` | even `ip a` will display my network interface devices
+  ```
+  [root@li287-172 ~]# ip addr
+  1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+      link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+      inet 127.0.0.1/8 scope host lo
+         valid_lft forever preferred_lft forever
+      inet6 ::1/128 scope host
+         valid_lft forever preferred_lft forever
+  2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+      link/ether f2:3c:92:e0:2e:f4 brd ff:ff:ff:ff:ff:ff
+      inet 66.228.37.172/24 brd 66.228.37.255 scope global dynamic noprefixroute eth0
+         valid_lft 82876sec preferred_lft 82876sec
+      inet6 2600:3c03::f03c:92ff:fee0:2ef4/64 scope global dynamic noprefixroute
+         valid_lft 2591996sec preferred_lft 604796sec
+      inet6 fe80::f03c:92ff:fee0:2ef4/64 scope link noprefixroute
+         valid_lft forever preferred_lft forever
+  ```
+    * the `ip` command is a cool command in that it encompasses many different things you can do with it.  Prior to `ip` there was a suite of different commands you would use for networking but I guess they all got wrapped up into `ip`
+    * the syntax for ip is `ip [OPTIONS] OBJECT {COMMAND | help} ` 
+    * options are optional []; we need an object and either a command or the string help.
+    * typing help after the object will give you the commands for the object
+    * and i think you can also type help after a command of an object and it will give you help on that
+      * nope.  I will only give you help upto the command level but the help does show a syntacical example of the object and the command
+
+I know I have a working IP address as eth0 shows a state of `UP` and I see an IP address in inet and inet6.  How do I break this so that I can fix this?  How is an ip address configured to "work" in a network.  I bet you use the IP command.  Let me see what I can find with `ip help`  It may be link, address, or route.
+
+I am reading the section Assigning IP addresses
+I playing around with the commands I come across this one which I think is important
+```
+[root@li287-172 ~]# ip route list
+default via 66.228.37.1 dev eth0 proto dhcp metric 100
+66.228.37.0/24 dev eth0 proto kernel scope link src 66.228.37.172 metric 100
+```
+
+I then delete the ip address (I think that would break network connectivity!) and It did!  I was kicked out.
+```
+[root@li287-172 ~]# ip addr delete 66.228.37.172 dev eth0
+packet_write_wait: Connection to 66.228.37.172 port 22: Broken pipe
+```
+
+So now I am going into the weblish console and running some commands there to see if I can get the networking to work again.
+
+I attempted to see the route again with `ip r list` but did not get any output!  I tried to go to google.com and nygel.ninja with lynx and I got an error there too.  The network is definitely borked.
+
+What to do now?  Let's reverse our command and add the IP address back.
+`[root@li287-172 ~]# ip addr add 66.228.37.172 dev eth0`
+  * NOTE: this is how to configure a static IP address
+I ran `ip r list` again but I still did not get any output.  Turns out, I needed to restart the NetworkManager for the settings to set
+`systemctl restart NetworkManger`
+* this is on Centos 8 and 'NetworkManager' is case sensitive
+
+So I accomplished the task of removing and replacing the IP address now I would like to focus on the mechanics of what, why and how this happens.  But for now, I'll just continue on in this chapter
+
+Well it seems in continuing on in the chapter I get a glimpse into the answer above.  If my understanding is correct, I removed the connection (route?) from the device, eth0
+
+What is a route?  It looks like a route is the way the operating system will find the location? of the network to connect to?  I am not sure in my understanding of a route.  But, according to this, if the OS can already see its way through to a working network, then `ip route` will show me the systems routing table.  The routing table will show how? to get to the local network and also the IP address of the device that it will use as a gateway router.
+```
+[root@li287-172 ~]# ip route
+default via 66.228.37.1 dev eth0 proto dhcp metric 100
+66.228.37.0/24 dev eth0 proto kernel scope link src 66.228.37.172 metric 100
+```
+This first line is the address of the gateway router which the local machine can connect to external networks
+* `66.228.37.1` is the gateway address
+* I think it is saying, "This is the default gateway route and you can connect via 66.228.37.1.  This route is configured to the device eth0 and assigned by dhcp."  I don't know what metric 100 means.
+
+The second line shows the NAT network and the netmask
+* `66.228.37.0/24` this is the address of the local NAT network
+
+NOTE: the default IP address assigned to routers is x.x.x.1. For instance, if you have a computer on your local network with an IP address of 192.168.1.34, chances are that router's address will be 192.168.1.1.  In this case, the gateway address is the same as the router address so then the gateway is the router?
+
+I am going to watch a youtube video on routes and the `ip` command to see if my understaning is correct or not.  brb [YouTube Video - IP Routing Explained](https://www.youtube.com/watch?v=8qtKpZGoNdI)
+
+Right off the bat, I now understand that IP packet forwarding and routing are the same thing.  Which makes sense when you think about it!
+
+The first thing a computer will do when it has a packet to forward is to see if the desination is in the local network or external network.  It will first look at it's own IP address and the subnet mask to make that determination.  If it determines to be external, it will then look to the gateway device?
+
+Wow, that is a good video but it is super in-depth for my purposes.  I am just trying to get a broad, working overview that I can use as a basics.
+
+[YouTube Video - Linux - Network Configuration](https://www.youtube.com/watch?v=Yr6qI6v1QCY)
+find all the networking stuff; release and renew DHCP; 
+
+I think one will be great as it is Linux centered and the speaker is using virtual box to virtualize their environment which is something I wanted to do so I could have a bit more control of the network.  I am not sure what Linode does to get networking going on a Linode.  Anyhow, it is time for my sleep time.
 
 
+* Route
+* IP config (Static or DHCP)
 
 
-
-
-
-
-
-
-.
