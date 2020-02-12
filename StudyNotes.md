@@ -368,17 +368,225 @@ I am going to watch a youtube video on routes and the `ip` command to see if my 
 
 Right off the bat, I now understand that IP packet forwarding and routing are the same thing.  Which makes sense when you think about it!
 
-The first thing a computer will do when it has a packet to forward is to see if the desination is in the local network or external network.  It will first look at it's own IP address and the subnet mask to make that determination.  If it determines to be external, it will then look to the gateway device?
+The first thing a computer will do when it has a packet to forward is to see if the destination is in the local network or external network.  It will first look at it's own IP address and the subnet mask to make that determination.  If it determines to be external, it will then look to the gateway device?
 
 Wow, that is a good video but it is super in-depth for my purposes.  I am just trying to get a broad, working overview that I can use as a basics.
 
 [YouTube Video - Linux - Network Configuration](https://www.youtube.com/watch?v=Yr6qI6v1QCY)
 find all the networking stuff; release and renew DHCP; 
 
-I think one will be great as it is Linux centered and the speaker is using virtual box to virtualize their environment which is something I wanted to do so I could have a bit more control of the network.  I am not sure what Linode does to get networking going on a Linode.  Anyhow, it is time for my sleep time.
+I think one will be great as it is Linux centered and the speaker is using virtual box to virtualise their environment which is something I wanted to do so I could have a bit more control of the network.  I am not sure what Linode does to get networking going on a Linode.  Anyhow, it is time for my sleep time.
 
 
 * Route
 * IP config (Static or DHCP)
 
+******************************
 
+##### Mon Feb 10 20:16:37 EST 2020
+## 109.4 Configure Client Side DNS
+
+To make a query to a DNS server, (which is how you will be able to connect to the inter and intra nets) your computer needs to know where to send a request to.  The /etc/resolv.conf is where your system will look for the answer.  This file is used to find a DNS server, to ask for an ip address for whatever domain it is that you want.  The service or application requesting the IP address; will then contact the name server at the address listed in /etc/resolv.conf.
+
+`/etc/resolv.conf` is where the computer will look to find where to look for dns entries.  This is what it will use to make external connections to the outside world.
+
+`/etc/hosts` is what the computer will use to make local connections to other computers within the same network.
+
+109.4 Configure Client Side DNS
+I am going to create a quick computing "kata" for these Key Knowledge Areas:
+* Query remote DNS servers.
+* Configure local name resolution and use remote DNS servers.
+* Modify the order in which name resolution is done.
+* Debug errors related to name resolution.
+* Awareness of systemd-resolved.
+
+#### Query remote DNS servers
+* dig MX nygel.ninja
+* dig @8.8.8.8 nygel.ninja
+* host nygel.ninja
+* host nygel.ninja 8.8.8.8
+* dig -t any nygel.ninja
+* host -a nygel.ninja
+
+#### Configure local name resolution and use remote DNS servers
+https://debian-handbook.info/browse/stable/sect.hostname-name-service.html
+* This uses `/etc/resolv.conf` and `/etc/hosts/` as well as `/etc/nsswitch`
+
+For local name resolution our tools are, `/etc/nsswitch.conf` and `/etc/hosts`.  How they interact is that that your system will look into `/etc/nsswitch.conf` to see where to look up destinations for locations within its own network.
+
+You can looks at `/etc/hosts` as a small table that maps IP addresses and local machine hostnames.  Even if there was no name server on the local network or there is a network outage, this file can be used to navigate between different local machines.
+
+Example of `/etc/hosts`:
+```
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+2600:3c03::f03c:91ff:fe9f:138d   nodeserver
+69.164.214.8   nodeserver
+```
+
+The mechanism for local name resolution is the `/etc/nsswitch` file. You will want to make sure you have an entry that looks like this: `hosts   files dns`.  Here is an example of the file:
+```bash
+#
+# /etc/nsswitch.conf
+#
+# An example Name Service Switch config file. This file should be
+# sorted with the most-used services at the beginning.
+#
+# The entry '[NOTFOUND=return]' means that the search for an
+# entry should stop if the search in the previous entry turned
+# up nothing. Note that if the search failed due to some other reason
+# (like no NIS server responding) then the search continues with the
+# next entry.
+#
+# Valid entries include:
+#
+#	nisplus			Use NIS+ (NIS version 3)
+#	nis			Use NIS (NIS version 2), also called YP
+#	dns			Use DNS (Domain Name Service)
+#	files			Use the local files
+#	db			Use the local database (.db) files
+#	compat			Use NIS on compat mode
+#	hesiod			Use Hesiod for user lookups
+#	[NOTFOUND=return]	Stop searching if not found so far
+#
+
+# To use db, put the "db" in front of "files" for entries you want to be
+# looked up first in the databases
+#
+# Example:
+#passwd:    db files nisplus nis
+#shadow:    db files nisplus nis
+#group:     db files nisplus nis
+
+passwd:     files sss
+shadow:     files sss
+group:      files sss
+#initgroups: files sss
+
+#hosts:     db files nisplus nis dns
+hosts:      files mdns4_minimal [NOTFOUND=return] dns myhostname
+
+# Example - obey only what nisplus tells us...
+#services:   nisplus [NOTFOUND=return] files
+#networks:   nisplus [NOTFOUND=return] files
+#protocols:  nisplus [NOTFOUND=return] files
+#rpc:        nisplus [NOTFOUND=return] files
+#ethers:     nisplus [NOTFOUND=return] files
+#netmasks:   nisplus [NOTFOUND=return] files
+
+bootparams: nisplus [NOTFOUND=return] files
+
+ethers:     files
+netmasks:   files
+networks:   files
+protocols:  files
+rpc:        files
+services:   files sss
+
+netgroup:   nisplus sss
+
+publickey:  nisplus
+
+automount:  files nisplus sss
+aliases:    files nisplus
+```
+
+This line basically says, "To find local hosts, first look into local files. Namely, `/etc/hosts`.  If you don't find a match there then look in the DNS settings under `/etc/resolv.conf`". You can even use NIS/NIS+ or LDAP servers as other possible sources
+
+To configure and use remote DNS Servers you will need to be sure your `/etc/resolv.conf` file is configured correctly.  This is what it should look like and it is normally automatically configured by NetworkManager.
+`/etc/resolv.conf`
+```bash
+# Generated by NetworkManager
+search members.linode.com
+nameserver 50.116.53.5
+nameserver 50.116.58.5
+nameserver 50.116.61.5
+```
+
+If I am not mistaken you just need to have the word nameserver and then an IP address of a nameserver.  Like `nameserver 8.8.8.8` to use google's nameserver.  Or `nameserver 1.1.1.1` to use Cloudflare's nameserver.  
+
+Q: Can nameserver and DNS server be used interchangeably?
+Some answers from Quora:
+> The acronym DNS stands for Domain Name System. It is a distributed system for translating host names into IP addresses. The name server is usually what people call the local DNS server,  is typically used to locate a DNS server.  If your website is hosted by another company, sometimes you'll need to use their name servers.
+Name servers "point" your domain name to the company that controls its DNS settings. Usually, this will be the company where you registered the domain name.
+
+> Now, I will come to the Name Server.
+A name server is the server where DNS software is installed and manage all the domain name records. Name servers are often called DSN (Data Source Name) servers.
+Every web site has two name servers to which it is pointed. So, lets say your name servers are ns1.xyz.com and ns2.xyz.com  . So, this is the place where the records for xyz.com would be hosted with the corresponding IP Addresses.
+
+So my understanding is that DNS gets their ip/domainName mapping data from nameservers.
+
+I'd like to take a better look into the mechanics of `/etc/resolv.conf`
+https://www.tldp.org/LDP/nag/node84.html
+So `search` and potentially `domain` are default domains that are tacked onto a hostname?
+And `nameserver` is just an address the computer will use to use a name server to help with DNS queries
+
+#### Modify the order in which name resolution is done
+In the `/etc/nsswitch.conf` file, change the order of the parameters of the `hosts` line
+
+#### Debug errors related to name resolution
+When solving your DNS issues, always ensure that you first determine whether your DNS server is returning the same response when queried from different locations. You should also ensure that your domain name is active and that you have a stable and robust ISP
+
+Because of all the moving parts and connections involved, a variety of things can go wrong with your DNS:
+* Slow updates cause problems that ripple out, often misleading you as you try to fix the issue.
+* Incorrect DNS settings create a slow-motion disaster that will not be immediately apparent.
+* There are multiple points of failure, and it can be hard to figure out where things have gone wrong.
+
+**Troubleshooting Common Errors**
+The first thing you can do when faced with DNS errors is to check for the most common issues:
+1. Check your domain registration. Make sure your registration is up to date and paid for, and hasn’t expired. If it is, you’ll have to renew it.
+2. Check your nameservers. Make sure that your domain is using the correct nameservers. If you’ve recently switched your domain registrar or hosting company, this is the most likely issue. Your domain will need to point to the correct nameservers for where your website is hosted. You can check your web host’s website to find out which nameservers you should be using.
+3. Wait for any recent changes to propagate. Unfortunately, due to the nature of DNS servers, it can take up to 24-48 hours for any changes you make to propagate across the web. If you just corrected your nameservers, give it some time to propagate.
+
+#### Awareness of systemd-resolved
+* `systemd-resolved` part of the `systemd` package.
+* `systemd-resolved` provides resolver services for DNS.
+* The configuration file is located `/etc/systemd/resolved.conf
+* I just checked on an instance and it seems to be disabled by default
+
+
+## 108.4 Manage Printers and Printing
+* Basic CUPS configuration for (local and remote printers)
+* Manage user print queues
+* Troubleshoot general printing problems
+* Add and remove jobs from configured printer queues
+
+#### Basic CUPS configuration for local and remote printers
+The CUPS config files are located in `/etc/cups`  You can also configure the the sevice from the web interface @ `http://localhost:631`.  The most important config files to know are cupsd.conf and printers.conf.
+
+##### `cupsd.conf`
+* this contains configs for the printer server
+
+##### `printers.conf`
+* this contains configs for the individual printers
+
+#### Add and remove jobs from configured printer queues
+**===CUPS (Common Unix Printing Service)===**
+
+**===LPD (Line Print Daemon) Legacy Commands===**
+You will use the `lpstat` command to view the print queues with the CUPS interface running.
+* `-a` will display the acceptance status of printers
+* `-p` will display the print status as either `enabled` or `disabled`
+* `-s` will display a summary of printers and their devices(config files)
+
+`lpadmin` is what you will use to add, modify and delete printers
+* eg: `lpadmin -p EPSON-610 -L "Kitchen" -v socket://192.168.0.3:9100 -m everywhere`
+  * `-p` gives the printer a name
+  * `-L` gives the printer a location
+  * `-v` is the network socket is going to connect to
+  * `-m` is the driver you want to use; we specified "everwhere" as a default until we can find a better fit
+  * `-E` means to enable the `-p` printer
+    * `lpadmin -p EPSON-610 -E
+
+You use `lpinfo -v` to see all the different types of connections you can make
+* `lpinfo --make-and-model "$MAKEnMODEL" -m` will give us the various ppd files we can use to make our printers more functional.
+
+
+To see all the printers configured on your system, you will want to run `lpc status` 
+
+To start a print job you run, `lpr` (line print run).  By default, if no printer is specified, it will print to the default printer.  In order to print to a specific printer, you simply add the `-P` flag and then specify the printer name.
+eg: `lpr -P EPSON-WF610 /etc/passwd`
+
+You can use the command `lpq` (line print queue) to view the print queue of the default printer.  If you want to see all of the system's printers you can just pass the `-a` flag to see them *A*ll.
+
+To remove a print job you use, `lprm` (line print remove) and you pass along the job ID number
