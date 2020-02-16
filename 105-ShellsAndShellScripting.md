@@ -5,12 +5,14 @@ This lesson takes a deeper dive into the interactive login shell and interactive
 ### The Interactive Login Shell
   * Created when you log into a console
   * created when logged in remotely using ssh
+  * Basically, if you have to log in or use ssh keys it is a log-in shell.
 
 ### The Interactive Non-Login Shell
   * emulates a terminal environment
   * iterm2, gnome terminal, kde konsole
+  * If you do not have to login to use the shell, then it is a non-login shell.
 
-What is important to note here is to learn how these shells are created.  More specifially the process that go on behind the scenes with the files that are used when creating a shell environment.
+What is important to note here is to learn how these shells are created.  More specifically the process that go on behind the scenes with the files that are used when creating a shell environment.
 
 #### What happens when you fire up a shell through ssh. (Login Shell)
   * `/etc/profile`
@@ -22,10 +24,10 @@ What is important to note here is to learn how these shells are created.  More s
   * /etc/profile will then make the configs taken from /profile.d/ apart of itself
   * then /profile/ will reach out to ~/.bash\_profile
   * `~/.bash_profile`
-    * could be called `.profile`
+    * could be called `~/.profile`
     * resides in my home directory
-    * `.bash_profile` then reaches out to `~/.bashrc` which is also in my home directory
-      * .bashrc contains information about the system configuration
+    * `~/.bash_profile` then reaches out to `~/.bashrc` which is also in my home directory
+      * ~/.bashrc contains information about the system configuration
       * it does this by simply talking to `/etc/bashrc`
   * Then you have a running shell!
 
@@ -424,5 +426,5 @@ This section is all about how to repeat commands using
   ```
 
 * ##### `exec`
-  * the `exec` command can but used to redirect all output from a shell into a file (or another process) without sending it to the current shell.
-  * for instance you can use the exec command to redirect output of a script to a log file
+  * the `exec` command can be used to redirect all output from a shell into a file (or another process) without sending it to the current shell.
+  * for instance, you can use the exec command to redirect output of a script to a log file

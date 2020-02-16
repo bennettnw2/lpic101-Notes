@@ -560,6 +560,19 @@ The CUPS config files are located in `/etc/cups`  You can also configure the the
 ##### `printers.conf`
 * this contains configs for the individual printers
 
+#### Manage User print queues
+* You can use either `lpstat` or `lpq` to view print queues
+* `lprm` will remove a print job by the print number
+* `cupsreject` will reject jobs that are sent to the printer and not be able to wait in the queue
+* `cupsdiable` will disable the printer and jobs will sit and wait in the queue
+
+#### Troubleshoot general printing problems
+* Error logs are located in /var/log/cups
+  * `access_log` and `error_log` are the important ones for figuring out troubleshooting
+* Config files are located in /etc/cups
+  * `cupsd.conf` - service config
+  * `printers.conf` - printers config
+
 #### Add and remove jobs from configured printer queues
 **===CUPS (Common Unix Printing Service)===**
 
@@ -590,3 +603,221 @@ eg: `lpr -P EPSON-WF610 /etc/passwd`
 You can use the command `lpq` (line print queue) to view the print queue of the default printer.  If you want to see all of the system's printers you can just pass the `-a` flag to see them *A*ll.
 
 To remove a print job you use, `lprm` (line print remove) and you pass along the job ID number
+
+## 105.1 Customize and use the shell environment
+* Set environment variables (e.g. PATH) at login or when spawning a new shell.
+* Write Bash functions for frequently used sequences of commands.
+* Maintain skeleton directories for new user accounts.
+* Set command search path with the proper directory.
+
+#### Set environment variable at login or when spawning a new shell.
+Well, you can configure either your `.bash_profile` or your `.bashrc`
+
+#### Write Bash functions for frequently used sequences of commands
+```bash
+function_name () {
+  read input
+  echo $input
+}
+```
+Or you could write it this way too
+```bash
+function fname () {
+  read input
+  echo $input
+}
+```
+
+#### Maintain skeleton directories for new user accounts.
+This is located in `/etc/skel` and is invoked upon user creation with -s?
+
+
+#### Set command search path with the proper directory.
+I believe you set this in either `.bash_profile` or `.bashrc`
+
+Also, lets settle it once and for all the order in which these files are accessed
+
+I started with `/etc/profile` as I was reading that environment variables are set, system-wide in `/etc/profile`.  Seems to be a good start!  I catted out the file and looked it over.  The notes at the top of the file indicate that this file is for system wide environment variable and startup programs.  It also says that login setup functions and aliases go in `/etc/bashrc`.  Then it goes through a bunch of initializations and then it finishes with sourcing `/etc/bashrc`.
+
+Let's have a look at `/etc/bashrc`.  At the top of this file, it indicates this is for system-wide funtions and aliases and that "Environment stuff goes in /etc/profile".  Cools!  But it does not source anything but it does talk alot about being either in a log in shell or a non-login shell.  Both of these files reccomend puting in custom scripts into `/etc/profile.d` to make modifictions to these files as it is not a good idea to edit them directly.
+
+Let's have a quick look at `/etc/profile.d`.  So this directory is a bunch of scripts that I imagine get initialized when `/etc/profile` is run and `/etc/bashrc`.
+
+This is a snippet of `/etc/profile` that will go through the `/etc/profile.d` directory and source each file in the directory.
+```bash
+for i in /etc/profile.d/*.sh /etc/profile.d/sh.local ; do
+    if [ -r "$i" ]; then
+        if [ "${-#*i}" != "$-" ]; then  # I am curious to know what is going on here!
+            . "$i"
+        else
+            . "$i" >/dev/null
+        fi
+    fi
+done
+```
+
+This is all well and good!  But how does `.bashrc` and `.bash_profile` get roped into all this?
+
+In reading through this book, they give a great overview of a matrix of the type of shell (login shell vs non-login) and the config files as global or personal.
+
+I've had trouble understanding a login shell and a non-login shell.  I used to think it was the difference between logging in through an SSH connection (login shell) vs opening up a terminal from a GUI (non-login).  In reading this book, LPIC-1 Certification Study Guide, I think a deeper and easier distiction would be that of, "Do you need authentication to use this shell?".  A non-login shell can also be created by a script that needs to run shell commands.  Or a non login shell is one that you run the command `bash` while already in a shell.  Great!
+
+Found this gem in `/etc/profile`:
+```bash
+\# Bash login shells run only /etc/profile
+\# Bash non-login shells run only /etc/bashrc
+```
+
+I found a nice tidbit on Quora.com on this and will stop here on my journey about login shells and stuffs:
+> * /etc/profile, ~/.bash_rc, and ~/.bash_profile, are all files and are called configuration scripts. They can contain variable declarations, export variables, commands to be executed on login like mail or news checking, setting umask, among others. Typical things users do are: adding some dir to $PATH, exporting some variable, changing $PS1, setting display colors, adding a greeting text message, etc.
+> * All those files, except for /etc/profile, are by default hidden, as denoted by the leading dot (so its not bash_profile but actually .bash_profile).
+> * When you login (either locally or remotely), this is called a login shell, and is treated a little bit different from normal shell invocation. In that case, the /etc/profile file, if present, is executed, after which either a ~/.bash_profile or a ~/.bashrc file is executed, in that order.
+> * For an interactive shell, i.e. the one you can interact with, because the shell’s stdin and stderr are both TTYs, the ~/.bash_profile file is not executed, but the ~/.bashrc is.
+> * For a non-interactive shell, i.e. the one with either one or both stdin/stderr is not a TTY, no configuration script is executed.
+> * In a login shell, at logout, a ~/.bash_logout file, if present, is executed.
+> * As per POSIX, stderr (and not stdout) is the stream that determines if a shell is interactive. If stderr is redirected, it is not an interactive shell, unless -i is specified in the shell invocation. stdout doesn’t have the same effect.
+
+107.3 Localisation and internationalisation
+* Configure timezone settings and environment variables.
+* Configure locale settings and environment variables.
+
+#### Configure timezone settings and environment variables.
+**Setting the System's Time Zone**
+Linux looks to the /etc/localtime file for information about its local time zone.  You can see your current timezone by running either, `date` or more specifically, `ls -l /etc/localtime`
+```bash
+$ date
+Sat Feb 15 10:37:13 EST 2020
+$ ls -l /etc/localtime
+lrwxrwxrwx. 1 root root 38 Jan 13 15:15 /etc/localtime -> ../usr/share/zoneinfo/America/New_York
+```
+
+To set the system's time zone you will basically take a file from `/usr/share/zoneinfo/....` and either copy it to or link it to `/etc/localtime`
+
+#### Configure locale settings and environment variables.
+Need to understand locale in Linux talk.  A locale is a way of specifying the computer's or user's language, country, and related information for purposes of customizing displays.  Like how some countries use commas instead of decimal points.  Or the format of the date and time.  These are things that make up a locale.
+
+A single locale takes the following form:
+`[language[_territory][.codeset][@modifier]]`
+eg: `en_US.UTF-8` `jp_JP.UTF-8`
+* language - is a two or three letter code
+  * en English | fr French | jp Japanese
+* territory are codes for specific regions; generally nations
+  * US United States | FR France | JP Japan
+* the codeset can be ASCII, UTF-8 or other encoding names
+  * ASCII - American Standard Code for Information Interchange is the oldest encoding.  It only supports 7 bit encodings and is not able to support many characters used in many non-English languages.
+  * ISO-8859 tried to extend ASCII by adding another bit.  This works well enough but there are sub-standards that handles one language or a small group of languages.  ISO-8859-1 covers Western Europe; ISO-8859-5 supports Cyrillic characters.
+  * UTF-8 is the latest and the best because it handles all of the writing systems automatically without the need for sub-standards.
+* modifier is a locale-specific code that modifies now the codeset works.  For instance, it may affect the sort order on a language-specific manner.
+
+To find out what your locale settings are, just run, `locale` or if you really want to nerd out `/usr/bin/locale`
+```bash
+$ /usr/bin/locale
+LANG=en_US.UTF-8
+LC_CTYPE="en_US.UTF-8"
+LC_NUMERIC="en_US.UTF-8"
+LC_TIME="en_US.UTF-8"
+LC_COLLATE="en_US.UTF-8"
+LC_MONETARY="en_US.UTF-8"
+LC_MESSAGES="en_US.UTF-8"
+LC_PAPER="en_US.UTF-8"
+LC_NAME="en_US.UTF-8"
+LC_ADDRESS="en_US.UTF-8"
+LC_TELEPHONE="en_US.UTF-8"
+LC_MEASUREMENT="en_US.UTF-8"
+LC_IDENTIFICATION="en_US.UTF-8"
+LC_ALL=
+```
+
+To view your current locale, you can run `localectl`.  Note that X11 has its own setting so you will need to change that too if you access your shell with X11.
+```bash
+$ localectl
+   System Locale: LANG=en_US.UTF-8
+       VC Keymap: us
+      X11 Layout: usf
+```
+
+To view all possible locale options, you can run either, `locale -a` or `localectl list-locals`
+
+To change the locale setting there are a few ways to do this.
+1. Temporarily 
+  * `export LANG=en_GB.UTF-8` and also `export LC_ALL=en_GB.UTF-8`
+2. Permanently
+  * add the above lines to either `~/.bashrc` or `~/.bash_profile`
+  * or `localctl set-locale el_GR.iso88597`  sets it for the Greek language
+
+If you have a file that happens to be encoded into a different format, you can use the `iconv` command to convert from one character encoding to another.
+eg:`iconv -f ISO-8859-1 -t UTF-8 -o newtext.txt oldtext.txt`
+* This says to take the file old file (oldtext.txt) and convert it from (-f) ISO-8859-1 to (-t) UTF-8 and then output (-o) the results to newtext.txt.
+
+
+108.1 Maintain System Time
+* Set the system date and time.
+* Set the hardware clock to the correct time in UTC.
+* Configure the correct timezone.
+* Basic NTP configuration using ntpd and chrony.
+* Knowledge of using the pool.ntp.org service.
+* Awareness of the ntpq command.
+
+There are two clocks on a system.  The hardware clock and the software clock.  The hardware clock maintans time even when the system is shut off and the software clock gets it setting from the hardware clock on boot.  Ideally, the hardware clock is set to UTC or Greenwich Mean Time so that all the timestamps are the same system wide.  And depending on the locale settings? the system will do the math from UTC to give you your current time.
+
+#### Set the system data and time.
+You can manually set the system time using the `date` command.  The syntax is as follows:
+`date [--utc] [MMDDhhmm[[CC]YY][.ss]]`
+  * two digit month, two digit day, two digit hour(24hr format), two digit minute.  Optional: two or four digit year. two digit seconds.
+  * eg: `date 0215150720203.21` # <-- will be Feb 15 15:07.21 2020
+`date` assumes you mean local time unless you add the --utc flag; this can also be -u or --universal
+
+#### Set the hardware clock to the correct time in UTC
+The utility `hwclock` will set the hardware clock from the software clock or the other way around.
+
+`timedatectl` run by itself to get an overview of your systems date and time settings
+`timedatectl set-time "2020-02-04 01:00:00"` will set both the local and the hardware clock.
+```bash
+$ sudo hwclock --show && date && date --utc
+2020-02-15 15:41:05.166339-05:00
+Sat Feb 15 15:41:14 EST 2020
+Sat Feb 15 20:41:14 UTC 2020
+$ timedatectl
+               Local time: Sat 2020-02-15 15:41:20 EST
+           Universal time: Sat 2020-02-15 20:41:20 UTC
+                 RTC time: Sat 2020-02-15 20:41:11
+                Time zone: America/New_York (EST, -0500)
+System clock synchronized: no
+              NTP service: n/a
+          RTC in local TZ: no
+$ which timedatectl
+/usr/bin/timedatectl
+$ timedatectl set-time "2020-02-03 03:33:23"
+==== AUTHENTICATING FOR org.freedesktop.timedate1.set-time ====
+Authentication is required to set the system time.
+Authenticating as: bennettnw2
+Password:
+==== AUTHENTICATION COMPLETE ====
+$ timedatectl
+               Local time: Mon 2020-02-03 03:33:32 EST
+           Universal time: Mon 2020-02-03 08:33:32 UTC
+                 RTC time: Mon 2020-02-03 08:33:33
+                Time zone: America/New_York (EST, -0500)
+System clock synchronized: no
+              NTP service: n/a
+          RTC in local TZ: no
+$ sudo hwclock --show && date && date --utc
+[sudo] password for bennettnw2:
+2020-02-03 03:33:50.122903-05:00
+Mon Feb  3 03:33:50 EST 2020
+Mon Feb  3 08:33:50 UTC 2020
+```
+
+So it seems that in a virtualised environment, each instance will have its own hardware clock.  Let me see if it survives a reboot.  So the command did not survive a reboot.  However, instead of being 9 seconds off, the software clock is now only 1 second off.  Technically I believe this is supposed to survive a reboot.  That is probably not going to be on the test sooooo.  Ok.
+
+#### Configure the correct timezone
+`timedatectl set-timezone "Antartica/Davis"`
+`timedatectl list-timezones` is how you see a list of timezones
+`tzselect` will give us a menu driven selection to find the name of a timezone.  It will not set it for us, but we can use the name we find in the `timedatectl set-timezone` command.
+You can also set the environment variable, TZ to set the timezone temporarily.
+  * eg: `TZ="America/Montserrat"
+
+The setting for the correct timezone is stored in `/etc/localtime` or `/etc/timezone` (depending on your distro) which typically is a symbolic link to `/usr/share/zoneinfo/America/New_York` or whatever country and region you select.
+
+#### Basic NTP configuration using ntpd and chrony
+The ntp daemon is what is used to keep systems synchronized with each other
