@@ -1,0 +1,8 @@
+/^Topic/s/^/# /g
+/^11/s/^/## /g
+/^10/s/^/## /g
+/^Weight/s/^/##### /g
+/^Description/s/^/##### /g
+/^Key/s/^/### /g
+/^The following is/s/^/### /g
+

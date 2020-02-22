@@ -36,7 +36,7 @@
 Manage cron and at jobs.
 Configure user access to cron and at services.
 Understand systemd timer units.
-##### The following is a partial list of the used files, terms and utilities:
+The following is a partial list of the used files, terms and utilities:
 
 /etc/cron.{d,daily,hourly,monthly,weekly}/
 /etc/at.deny

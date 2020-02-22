@@ -12,7 +12,7 @@ Overwrite specific aspects of Xorg configuration, such as keyboard layout.
 Understand the components of desktop environments, such as display managers and window managers.
 Manage access to the X server and display applications on remote X servers.
 Awareness of Wayland.
-##### The following is a partial list of the used files, terms and utilities:
+The following is a partial list of the used files, terms and utilities:
 
 /etc/X11/xorg.conf
 /etc/X11/xorg.conf.d/
@@ -32,7 +32,7 @@ X
 
 Awareness of major desktop environments
 Awareness of protocols to access remote desktop sessions
-##### The following is a partial list of the used files, terms and utilities:
+The following is a partial list of the used files, terms and utilities:
 
 KDE
 Gnome
@@ -53,7 +53,7 @@ RDP
 
 Basic knowledge of visual settings and themes.
 Basic knowledge of assistive technology.
-##### The following is a partial list of the used files, terms and utilities:
+The following is a partial list of the used files, terms and utilities:
 
 High Contrast/Large Print Desktop Themes.
 Screen Reader.

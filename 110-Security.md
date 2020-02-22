@@ -37,7 +37,7 @@ It is important to know what files have the suid and sgid bit set on them;
 * eg: `find / -perm -u+s` <= set user id bit 
 * it is good to keep an eye on these types of files to make sure no one has tampered with them
 * can also find by looking for the set octal
-  * eg: `find / -perm -04000` <= set octal?
+  * eg: `find / -perm -04000` <= set octal for user, group would be -02000
   * `find / -perm -g+s` <= set group id bit
 
 It is also good to keep track of resources

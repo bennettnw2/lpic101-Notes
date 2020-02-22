@@ -12,7 +12,7 @@ Configure the correct timezone.
 Basic NTP configuration using ntpd and chrony.
 Knowledge of using the pool.ntp.org service.
 Awareness of the ntpq command.
-##### The following is a partial list of the used files, terms and utilities:
+The following is a partial list of the used files, terms and utilities:
 
 /usr/share/zoneinfo/
 /etc/timezone

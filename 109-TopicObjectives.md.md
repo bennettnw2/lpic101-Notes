@@ -12,7 +12,7 @@ Knowledge about common TCP and UDP ports and services (20, 21, 22, 23, 25, 53, 8
 Knowledge about the differences and major features of UDP, TCP and ICMP.
 Knowledge of the major differences between IPv4 and IPv6.
 Knowledge of the basic features of IPv6.
-##### The following is a partial list of the used files, terms and utilities:
+The following is a partial list of the used files, terms and utilities:
 
 /etc/services
 IPv4, IPv6
@@ -30,7 +30,7 @@ TCP, UDP, ICMP
 Understand basic TCP/IP host configuration.
 Configure ethernet and wi-fi network using NetworkManager.
 Awareness of systemd-networkd.
-##### The following is a partial list of the used files, terms and utilities:
+The following is a partial list of the used files, terms and utilities:
 
 /etc/hostname
 /etc/hosts
@@ -53,7 +53,7 @@ Manually configure network interfaces, including viewing and changing the config
 Manually configure routing, including viewing and changing routing tables and setting the default route using iproute2.
 Debug problems associated with the network configuration.
 Awareness of legacy net-tools commands.
-##### The following is a partial list of the used files, terms and utilities:
+The following is a partial list of the used files, terms and utilities:
 
 ip
 hostname
@@ -82,7 +82,7 @@ Configure local name resolution and use remote DNS servers.
 Modify the order in which name resolution is done.
 Debug errors related to name resolution.
 Awareness of systemd-resolved.
-##### The following is a partial list of the used files, terms and utilities:
+The following is a partial list of the used files, terms and utilities:
 
 /etc/hosts
 /etc/resolv.conf
