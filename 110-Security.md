@@ -272,7 +272,7 @@ service telnet
 * if we try to login, `xinetd` is now standing guard rather than `telnet` directly
 
 ##### TCP Wrappers
-* this functionality uses a host.allow an/or a hosts.deny file to determine access to network services
+* this functionality uses a host.allow and/or a hosts.deny file to determine access to network services
 * said another way, this uses two configuration files to determine if an incoming request is allowed to access a network service or not
 * the first file to get checked is the `/etc/hosts.allow` file
   * this includes a listing of services and what networks or hostnames are allowed access to those services
