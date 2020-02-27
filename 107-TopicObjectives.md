@@ -6,25 +6,25 @@
 
 ### Key Knowledge Areas:
 
-* Add, modify and remove users and groups.
-* Manage user/group info in password/group databases.
-* Create and manage special purpose and limited accounts.
-* The following is a partial list of the used files, terms and utilities:
+##### Add, modify and remove users and groups.
+##### Manage user/group info in password/group databases.
+##### Create and manage special purpose and limited accounts.
+##### The following is a partial list of the used files, terms and utilities:
 
-* /etc/passwd
-* /etc/shadow
-* /etc/group
-* /etc/skel/
-* chage
-* getent
-* groupadd
-* groupdel
-* groupmod
-* passwd
-* useradd
-* userdel
-* usermod
- 
+##### /etc/passwd
+##### /etc/shadow
+##### /etc/group
+##### /etc/skel/
+##### chage
+##### getent
+##### groupadd
+##### groupdel
+##### groupmod
+##### passwd
+##### useradd
+##### userdel
+##### usermod
+
 
 ## 107.2 Automate system administration tasks by scheduling jobs
 ##### Weight: 4
@@ -33,42 +33,34 @@
 
 #### Key Knowledge Areas:
 
-Manage cron and at jobs.
-Configure user access to cron and at services.
-Understand systemd timer units.
+##### Manage cron and at jobs.
+##### Configure user access to cron and at services.
+##### Understand systemd timer units.
+
 ##### The following is a partial list of the used files, terms and utilities:
 
-/etc/cron.{d,daily,hourly,monthly,weekly}/
-/etc/at.deny
-/etc/at.allow
-/etc/crontab
-/etc/cron.allow
-/etc/cron.deny
-/var/spool/cron/
-crontab
-at
-atq
-atrm
-systemctl
-systemd-run
+##### /etc/cron.{d,daily,hourly,monthly,weekly}/
+##### /etc/at.deny
+##### /etc/at.allow
+##### /etc/crontab
+##### /etc/cron.allow
+##### /etc/cron.deny
+##### /var/spool/cron/
+##### crontab
+##### at
+##### atq
+##### atrm
+##### systemctl
+##### systemd-run
 
 ## 107.3 Localisation and internationalisation
-* Configure timezone settings and environment variables.
-* Configure locale settings and environment variables.
+##### Weight: 3
 
-#### Configure timezone settings and environment variables.
-**Setting the System's Time Zone**
-Linux looks to the /etc/localtime file for information about its local time zone.  You can see your current timezone by running either, `date` or more specifically, `ls -l /etc/localtime`
-```bash
-$ date
-Sat Feb 15 10:37:13 EST 2020
-$ ls -l /etc/localtime
-lrwxrwxrwx. 1 root root 38 Jan 13 15:15 /etc/localtime -> ../usr/share/zoneinfo/America/New_York
-```
+#### Description: Candidates should be able to localize a system in a different language than English. As well, an understanding of why LANG=C is useful when scripting.
 
-To set the system's time zone you will basically take a file from `/usr/share/zoneinfo/....` and either copy it to or link it to `/etc/localtime`
+##### Key Knowledge Areas:
 
-#### Configure locale settings and environment variables.
+##### Configure locale settings and environment variables.
 Need to understand locale in Linux talk.  A locale is a way of specifying the computer's or user's language, country, and related information for purposes of customizing displays.  Like how some countries use commas instead of decimal points.  Or the format of the date and time.  These are things that make up a locale.
 
 A single locale takes the following form:
@@ -123,3 +115,33 @@ To change the locale setting there are a few ways to do this.
 If you have a file that happens to be encoded into a different format, you can use the `iconv` command to convert from one character encoding to another.
 eg:`iconv -f ISO-8859-1 -t UTF-8 -o newtext.txt oldtext.txt`
 * This says to take the file old file (oldtext.txt) and convert it from (-f) ISO-8859-1 to (-t) UTF-8 and then output (-o) the results to newtext.txt.
+##### Configure timezone settings and environment variables.
+**Setting the System's Time Zone**
+Linux looks to the /etc/localtime file for information about its local time zone.  You can see your current timezone by running either, `date` or more specifically, `ls -l /etc/localtime`
+```bash
+$ date
+Sat Feb 15 10:37:13 EST 2020
+$ ls -l /etc/localtime
+lrwxrwxrwx. 1 root root 38 Jan 13 15:15 /etc/localtime -> ../usr/share/zoneinfo/America/New_York
+```
+
+To set the system's time zone you will basically take a file from `/usr/share/zoneinfo/....` and either copy it to or link it to `/etc/localtime`
+##### The following is a partial list of the used files, terms and utilities:
+
+##### /etc/timezone
+##### /etc/localtime
+##### /usr/share/zoneinfo/
+##### LC_*
+##### LC_ALL
+##### LANG
+##### TZ
+##### /usr/bin/locale
+##### tzselect
+##### timedatectl
+##### date
+##### iconv
+##### UTF-8
+##### ISO-8859
+##### ASCII
+##### Unicode
+

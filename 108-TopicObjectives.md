@@ -6,26 +6,27 @@
 
 #### Key Knowledge Areas:
 
-Set the system date and time.
-Set the hardware clock to the correct time in UTC.
-Configure the correct timezone.
-Basic NTP configuration using ntpd and chrony.
-Knowledge of using the pool.ntp.org service.
-Awareness of the ntpq command.
+##### Set the system date and time.
+##### Set the hardware clock to the correct time in UTC.
+##### Configure the correct timezone.
+##### Basic NTP configuration using ntpd and chrony.
+##### Knowledge of using the pool.ntp.org service.
+##### Awareness of the ntpq command.
+
 ##### The following is a partial list of the used files, terms and utilities:
 
-/usr/share/zoneinfo/
-/etc/timezone
-/etc/localtime
-/etc/ntp.conf
-/etc/chrony.conf
-date
-hwclock
-timedatectl
-ntpd
-ntpdate
-chronyc
-pool.ntp.org
+##### /usr/share/zoneinfo/
+##### /etc/timezone
+##### /etc/localtime
+##### /etc/ntp.conf
+##### /etc/chrony.conf
+##### date
+##### hwclock
+##### timedatectl
+##### ntpd
+##### ntpdate
+##### chronyc
+##### pool.ntp.org
 
 
 ## 108.2 System logging
@@ -35,28 +36,28 @@ pool.ntp.org
 
 #### Key Knowledge Areas:
 
-Basic configuration of rsyslog.
-Understanding of standard facilities, priorities and actions.
-Query the systemd journal.
-Filter systemd journal data by criteria such as date, service or priority.
-Configure persistent systemd journal storage and journal size.
-Delete old systemd journal data.
-Retrieve systemd journal data from a rescue system or file system copy.
-Understand interaction of rsyslog with systemd-journald.
-Configuration of logrotate.
-Awareness of syslog and syslog-ng.
-Terms and Utilities:
+##### Basic configuration of rsyslog.
+##### Understanding of standard facilities, priorities and actions.
+##### Query the systemd journal.
+##### Filter systemd journal data by criteria such as date, service or priority.
+##### Configure persistent systemd journal storage and journal size.
+##### Delete old systemd journal data.
+##### Retrieve systemd journal data from a rescue system or file system copy.
+##### Understand interaction of rsyslog with systemd-journald.
+##### Configuration of logrotate.
+##### Awareness of syslog and syslog-ng.
+##### Terms and Utilities:
 
-/etc/rsyslog.conf
-/var/log/
-logger
-logrotate
-/etc/logrotate.conf
-/etc/logrotate.d/
-journalctl
-systemd-cat
-/etc/systemd/journald.conf
-/var/log/journal/
+##### /etc/rsyslog.conf
+##### /var/log/
+##### logger
+##### logrotate
+##### /etc/logrotate.conf
+##### /etc/logrotate.d/
+##### journalctl
+##### systemd-cat
+##### /etc/systemd/journald.conf
+##### /var/log/journal/
 
 
 ## 108.3 Mail Transfer Agent (MTA) basics
@@ -66,27 +67,28 @@ systemd-cat
 
 #### Key Knowledge Areas:
 
-Create e-mail aliases.
-Configure e-mail forwarding.
-Knowledge of commonly available MTA programs (postfix, sendmail, exim) (no configuration).
-Terms and Utilities:
+##### Create e-mail aliases.
+##### Configure e-mail forwarding.
+##### Knowledge of commonly available MTA programs (postfix, sendmail, exim) (no configuration).
+##### Terms and Utilities:
 
-~/.forward
-sendmail emulation layer commands
-newaliases
-mail
-mailq
-postfix
-sendmail
-exim
+##### ~/.forward
+##### sendmail emulation layer commands
+##### newaliases
+##### mail
+##### mailq
+##### postfix
+##### sendmail
+##### exim
 
 ## 108.4 Manage Printers and Printing
-* Basic CUPS configuration for (local and remote printers)
-* Manage user print queues
-* Troubleshoot general printing problems
-* Add and remove jobs from configured printer queues
+##### Weight: 2
 
-#### Basic CUPS configuration for local and remote printers
+##### Description: Candidates should be able to manage print queues and user print jobs using CUPS and the LPD compatibility interface.
+ 
+#### Key Knowledge Areas:
+
+##### Basic CUPS configuration (for local and remote printers).
 The CUPS config files are located in `/etc/cups`  You can also configure the the sevice from the web interface @ `http://localhost:631`.  The most important config files to know are cupsd.conf and printers.conf.
 
 ##### `cupsd.conf`
@@ -94,21 +96,18 @@ The CUPS config files are located in `/etc/cups`  You can also configure the the
 
 ##### `printers.conf`
 * this contains configs for the individual printers
-
-#### Manage User print queues
+##### Manage user print queues.
 * You can use either `lpstat` or `lpq` to view print queues
 * `lprm` will remove a print job by the print number
 * `cupsreject` will reject jobs that are sent to the printer and not be able to wait in the queue
 * `cupsdiable` will disable the printer and jobs will sit and wait in the queue
-
-#### Troubleshoot general printing problems
+##### Troubleshoot general printing problems.
 * Error logs are located in /var/log/cups
   * `access_log` and `error_log` are the important ones for figuring out troubleshooting
 * Config files are located in /etc/cups
   * `cupsd.conf` - service config
   * `printers.conf` - printers config
-
-#### Add and remove jobs from configured printer queues
+##### Add and remove jobs from configured printer queues.
 **===CUPS (Common Unix Printing Service)===**
 
 **===LPD (Line Print Daemon) Legacy Commands===**
@@ -138,3 +137,8 @@ eg: `lpr -P EPSON-WF610 /etc/passwd`
 You can use the command `lpq` (line print queue) to view the print queue of the default printer.  If you want to see all of the system's printers you can just pass the `-a` flag to see them *A*ll.
 
 To remove a print job you use, `lprm` (line print remove) and you pass along the job ID number
+##### The following is a partial list of the used files, terms and utilities:
+
+##### CUPS configuration files, tools and utilities
+##### /etc/cups/
+##### lpd legacy interface (lpr, lprm, lpq)

@@ -6,137 +6,7 @@
 
 #### Key Knowledge Areas:
 
-Demonstrate an understanding of network masks and CIDR notation.
-Knowledge of the differences between private and public "dotted quad" IP addresses.
-Knowledge about common TCP and UDP ports and services (20, 21, 22, 23, 25, 53, 80, 110, 123, 139, 143, 161, 162, 389, 443, 465, 514, 636, 993, 995).
-Knowledge about the differences and major features of UDP, TCP and ICMP.
-Knowledge of the major differences between IPv4 and IPv6.
-Knowledge of the basic features of IPv6.
-##### The following is a partial list of the used files, terms and utilities:
-
-/etc/services
-IPv4, IPv6
-Subnetting
-TCP, UDP, ICMP
-
-
-## 109.2 Persistent network configuration
-##### Weight: 4
-
-##### Description: Candidates should be able to manage the persistent network configuration of a Linux host.
-
-#### Key Knowledge Areas:
-
-Understand basic TCP/IP host configuration.
-Configure ethernet and wi-fi network using NetworkManager.
-Awareness of systemd-networkd.
-##### The following is a partial list of the used files, terms and utilities:
-
-/etc/hostname
-/etc/hosts
-/etc/nsswitch.conf
-/etc/resolv.conf
-nmcli
-hostnamectl
-ifup
-ifdown
-
-
-## 109.3 Basic network troubleshooting
-##### Weight: 4
-
-##### Description: Candidates should be able to troubleshoot networking issues on client hosts.
-
-#### Key Knowledge Areas:
-
-Manually configure network interfaces, including viewing and changing the configuration of network interfaces using iproute2.
-Manually configure routing, including viewing and changing routing tables and setting the default route using iproute2.
-Debug problems associated with the network configuration.
-Awareness of legacy net-tools commands.
-##### The following is a partial list of the used files, terms and utilities:
-
-ip
-hostname
-ss
-ping
-ping6
-traceroute
-traceroute6
-tracepath
-tracepath6
-netcat
-ifconfig
-netstat
-route
-
-
-## 109.4 Configure client side DNS
-##### Weight: 2
-
-##### Description: Candidates should be able to configure DNS on a client host.
-
-#### Key Knowledge Areas:
-
-Query remote DNS servers.
-Configure local name resolution and use remote DNS servers.
-Modify the order in which name resolution is done.
-Debug errors related to name resolution.
-Awareness of systemd-resolved.
-##### The following is a partial list of the used files, terms and utilities:
-
-/etc/hosts
-/etc/resolv.conf
-/etc/nsswitch.conf
-host
-dig
-getent
-
-# Netstat and ss
-
-What command, depending on its options, can display the open TCP connections, the routing tables, as  well as network interface statistics? (Specify only the command without any path or parameters.)
-Correct Answer: netstat
-
-Netstat shows up in the Networking section and the Security section.  In the security section you would use netstat to view active connections; `netstat -tunalp`
-* -t means show tcp connections
-* -u means show udp connections
-* -n means show the network addresses as numbers (default is to show them symbolically)
-* -a means show the state of all sockets; includes processes that are used by server processes
-* -l means to show us connections that are listening
-* -p means show us process ID and the name of the protocol
-  * `PID/Program` is the header that shows up; should read it as `PID/Protocol`
-* -r will show the routing tables
-  * when used with -a to show protocol-cloned routes
-  * if -s is present, it will show routing statistics
-  * if -l is present, we will also get the maximum transmission unit (mtu) will also be displayed
-
-So in checking out the man pages along with running commands with different flags, I understand netstat to be a multi-use command.  What I mean by that is that there are a few base commands that will show you different things and then there are the options or other flags that go along with the base command.  For instance if you run `netstat -tunalpr`, you will only get the as routing table indicated by the -r flag.  Or if you run `netstat -tuas` you will only get the statistics given by the -s command.  But as this command has been deprecated for `ss`  you should use `ss` instead.
-
-
-`ss` (short for socket statistics)is not able to show routing tables.  Many of the switches in `ss` are the same as `netstat`
-
-******************************
-
-# IP Address CIDR Notation
-
-For solving problems regarding how many IP addresses can be used for unique hosts in sub-netting just write out a small table of numbers.
-The top row will be binary bit notation?  128 64 32 16 8 4 2 1 and the bottom row will be whole numbers, in ascending order to 32 I guess these are positional numbers which make sense because when you have a /28, for instance, all the bits before it, 1-27 are all fixed and cannot be changed.
-```
-128 64 32 16 8 4 2 1 | 128 64 32 16 8  4  2  1  | 128 64 32 16 8  4  2  1  | 128 64 32 16 8  4  2  1
-1   2  3  4  5 6 7 8 | 9   10 11 12 13 14 15 16 | 17  18 19 20 21 22 23 24 | 25  26 27 28 29 30 31 32
-```
-Since each octet of an IP address has 8 spots; 32/8 = 4 which are the four octets of an IP address.  Depending on the cidr number will determine up to what position of the bits are fixed.
-
-For the last octet of:
-```
-128 64 32 16 8  4  2  1
-25  26 27 28 29 30 31 32
-```
-
-The bit notation corresponds to how many IP addresses we can have. NOTE:  One will always be reserved for the broadcast address and the other is and the other for the network address.  The first address in the range is the network address and the last address in the range is the broadcast address.
-
-
-******************************
-
+##### Demonstrate an understanding of network masks and CIDR notation.
 # Determine Subnet Mask Address
 
 For the subnet mask you would take the total number of IP addresses, which if you had a chart would just double starting with the furthest left number take one from it, and then take that resulting number from 255; 
@@ -159,6 +29,318 @@ For example; a /14 and using this chart below...
 ```
 I would start with what I know which is 255.x.0.0.  Then I know that the /14 is in the same position as the /30.
 A /30 gives me 4 ip addresses and using the formula above for subnet masks, 4-1 = 3; 255-3 = 252. The final subnet mask will be 255.252.0.0
+# IP Address CIDR Notation
+
+For solving problems regarding how many IP addresses can be used for unique hosts in sub-netting just write out a small table of numbers.
+The top row will be binary bit notation?  128 64 32 16 8 4 2 1 and the bottom row will be whole numbers, in ascending order to 32 I guess these are positional numbers which make sense because when you have a /28, for instance, all the bits before it, 1-27 are all fixed and cannot be changed.
+```
+128 64 32 16 8 4 2 1 | 128 64 32 16 8  4  2  1  | 128 64 32 16 8  4  2  1  | 128 64 32 16 8  4  2  1
+1   2  3  4  5 6 7 8 | 9   10 11 12 13 14 15 16 | 17  18 19 20 21 22 23 24 | 25  26 27 28 29 30 31 32
+```
+Since each octet of an IP address has 8 spots; 32/8 = 4 which are the four octets of an IP address.  Depending on the cidr number will determine up to what position of the bits are fixed.
+
+For the last octet of:
+```
+128 64 32 16 8  4  2  1
+25  26 27 28 29 30 31 32
+```
+
+The bit notation corresponds to how many IP addresses we can have. NOTE:  One will always be reserved for the broadcast address and the other is and the other for the network address.  The first address in the range is the network address and the last address in the range is the broadcast address.
+##### Knowledge of the differences between private and public "dotted quad" IP addresses.
+Private IP addresses are:
+* 10.0.0.0/8   10.0.0.0 - 10.255.255.255
+* 172.16.0.0/12 172.16.0.0 - 172.31.255.255
+* 192.168.0.0/16   192.168.0.0 - 192.168.255.255
+These are reserved for local communication within a private network.
+
+Public IP addresses are used for the public network/internet at large
+##### Knowledge about common TCP and UDP ports and services(Study Ankidroid List)
+##### Knowledge about the differences and major features of UDP, TCP and ICMP.
+* UDP always moving forward and never checking to make sure everyone is there
+* TCP moving forward but always checking to make sure that everyone is account for
+  * UDP and TCP are transportation protocols meaning they transport data between clients and hosts
+* ICMP is like a traffic cop communicating the status of the network to anyone who cares to look and listen
+  * ICMP is a control messaging protocol communicating statuses
+##### Knowledge of the major differences between IPv4 and IPv6.
+* IPv4 is 32 bits while IPv4 is 128
+* IPv4 is a numeric address separated by (.) IPv6 is alphanumeric, hexadecimal separated by a colon
+* IPv4 offers 12 header fields; IPv6 only needs 8
+* IPv4 supports broadcast but IPv6 does not; it does have an anycast address though
+* IPv4 uses ARP to map MAC addresses and IPv6 uses NDP
+##### Knowledge of the basic features of IPv6.
+* IPv6 does not need network masks because the address space is so large, all devices can have unique address
+* IPv6 has built-in security with IPSec (Internet Protocol Security) 
+
+##### The following is a partial list of the used files, terms and utilities:
+
+##### /etc/services
+This file will store information about the services that client applications might interact with.  Within the file is the service name, port number, protocol and any aliases used.
+```text
+# service-name  port/protocol  [aliases ...]   [# comment]
+finger          79/tcp
+finger          79/udp
+http            80/tcp          www www-http    # WorldWideWeb HTTP
+http            80/udp          www www-http    # HyperText Transfer Protocol
+http            80/sctp                         # HyperText Transfer Protocol
+kerberos        88/tcp          kerberos5 krb5  # Kerberos v5
+kerberos        88/udp          kerberos5 krb5  # Kerberos v5
+supdup          95/tcp
+supdup          95/udp
+hostname        101/tcp         hostnames       # usually from sri-nic
+hostname        101/udp         hostnames       # usually from sri-nic
+```
+
+##### IPv4, IPv6
+##### Subnetting
+##### TCP, UDP, ICMP
+
+
+## 109.2 Persistent network configuration
+##### Weight: 4
+
+##### Description: Candidates should be able to manage the persistent network configuration of a Linux host.
+
+#### Key Knowledge Areas:
+
+##### Understand basic TCP/IP host configuration.
+##### Configure ethernet and wi-fi network using NetworkManager.
+##### Awareness of systemd-networkd.
+`systemd-networkd` is a system service that manages networks.  It detects and configures network devices as they appear, as well as creating virtual network devices.  The local administrative directory is located at `/etc/systemd/network`.  Networks are configured in `.network` files and virtual network devices are configured in `.netdev` files.
+
+##### The following is a partial list of the used files, terms and utilities:
+
+##### /etc/hostname
+
+##### /etc/hosts
+
+##### /etc/nsswitch.conf
+
+##### /etc/resolv.conf
+
+##### nmcli
+
+##### hostnamectl
+
+##### ifup
+
+##### ifdown
+
+
+## 109.3 Basic network troubleshooting
+##### Weight: 4
+
+##### Description: Candidates should be able to troubleshoot networking issues on client hosts.
+
+#### Key Knowledge Areas:
+
+##### Manually configure network interfaces, including viewing and changing the configuration of network interfaces using iproute2.
+
+##### Manually configure routing, including viewing and changing routing tables and setting the default route using iproute2.
+
+##### Debug problems associated with the network configuration.
+
+##### Awareness of legacy net-tools commands.
+
+##### The following is a partial list of the used files, terms and utilities:
+
+##### ip
+##### hostname
+##### ss
+`ss` (short for socket statistics)is not able to show routing tables.  Many of the switches in `ss` are the same as `netstat`
+##### ping
+##### ping6
+##### traceroute
+##### traceroute6
+##### tracepath
+##### tracepath6
+##### netcat
+##### ifconfig
+##### netstat
+What command, depending on its options, can display the open TCP connections, the routing tables, as  well as network interface statistics? (Specify only the command without any path or parameters.)
+Correct Answer: netstat
+
+Netstat shows up in the Networking section and the Security section.  In the security section you would use netstat to view active connections; `netstat -tunalp`
+* -t means show tcp connections
+* -u means show udp connections
+* -n means show the network addresses as numbers (default is to show them symbolically)
+* -a means show the state of all sockets; includes processes that are used by server processes
+* -l means to show us connections that are listening
+* -p means show us process ID and the name of the protocol
+  * `PID/Program` is the header that shows up; should read it as `PID/Protocol`
+* -r will show the routing tables
+  * when used with -a to show protocol-cloned routes
+  * if -s is present, it will show routing statistics
+  * if -l is present, we will also get the maximum transmission unit (mtu) will also be displayed
+
+So in checking out the man pages along with running commands with different flags, I understand netstat to be a multi-use command.  What I mean by that is that there are a few base commands that will show you different things and then there are the options or other flags that go along with the base command.  For instance if you run `netstat -tunalpr`, you will only get the as routing table indicated by the -r flag.  Or if you run `netstat -tuas` you will only get the statistics given by the -s command.  But as this command has been deprecated for `ss`  you should use `ss` instead.
+##### route
+
+
+## 109.4 Configure client side DNS
+##### Weight: 2
+
+To make a query to a DNS server, (which is how you will be able to connect to the inter and intra nets) your computer needs to know where to send a request to.  The /etc/resolv.conf is where your system will look for the answer.  This file is used to find a DNS server, to ask for an ip address for whatever domain it is that you want.  The service or application requesting the IP address; will then contact the name server at the address listed in /etc/resolv.conf.
+
+`/etc/resolv.conf` is where the computer will look to find where to look for dns entries.  This is what it will use to make external connections to the outside world.
+
+`/etc/hosts` is what the computer will use to make local connections to other computers within the same network.
+
+##### Description: Candidates should be able to configure DNS on a client host.
+
+#### Key Knowledge Areas:
+
+##### Query remote DNS servers.
+* dig MX nygel.ninja
+* dig @8.8.8.8 nygel.ninja
+* host nygel.ninja
+* host nygel.ninja 8.8.8.8
+* dig -t any nygel.ninja
+* host -a nygel.ninja
+##### Configure local name resolution and use remote DNS servers.
+https://debian-handbook.info/browse/stable/sect.hostname-name-service.html
+* This uses `/etc/resolv.conf` and `/etc/hosts/` as well as `/etc/nsswitch`
+
+For local name resolution our tools are, `/etc/nsswitch.conf` and `/etc/hosts`.  How they interact is that that your system will look into `/etc/nsswitch.conf` to see where to look up destinations for locations within its own network.
+
+You can looks at `/etc/hosts` as a small table that maps IP addresses and local machine hostnames.  Even if there was no name server on the local network or there is a network outage, this file can be used to navigate between different local machines.
+
+Example of `/etc/hosts`:
+```
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+2600:3c03::f03c:91ff:fe9f:138d   nodeserver
+69.164.214.8   nodeserver
+```
+
+The mechanism for local name resolution is the `/etc/nsswitch` file. You will want to make sure you have an entry that looks like this: `hosts   files dns`.  Here is an example of the file:
+```bash
+#
+# /etc/nsswitch.conf
+#
+# An example Name Service Switch config file. This file should be
+# sorted with the most-used services at the beginning.
+#
+# The entry '[NOTFOUND=return]' means that the search for an
+# entry should stop if the search in the previous entry turned
+# up nothing. Note that if the search failed due to some other reason
+# (like no NIS server responding) then the search continues with the
+# next entry.
+#
+# Valid entries include:
+#
+#	nisplus			Use NIS+ (NIS version 3)
+#	nis			Use NIS (NIS version 2), also called YP
+#	dns			Use DNS (Domain Name Service)
+#	files			Use the local files
+#	db			Use the local database (.db) files
+#	compat			Use NIS on compat mode
+#	hesiod			Use Hesiod for user lookups
+#	[NOTFOUND=return]	Stop searching if not found so far
+#
+
+# To use db, put the "db" in front of "files" for entries you want to be
+# looked up first in the databases
+#
+# Example:
+#passwd:    db files nisplus nis
+#shadow:    db files nisplus nis
+#group:     db files nisplus nis
+
+passwd:     files sss
+shadow:     files sss
+group:      files sss
+#initgroups: files sss
+
+#hosts:     db files nisplus nis dns
+hosts:      files mdns4_minimal [NOTFOUND=return] dns myhostname
+
+# Example - obey only what nisplus tells us...
+#services:   nisplus [NOTFOUND=return] files
+#networks:   nisplus [NOTFOUND=return] files
+#protocols:  nisplus [NOTFOUND=return] files
+#rpc:        nisplus [NOTFOUND=return] files
+#ethers:     nisplus [NOTFOUND=return] files
+#netmasks:   nisplus [NOTFOUND=return] files
+
+bootparams: nisplus [NOTFOUND=return] files
+
+ethers:     files
+netmasks:   files
+networks:   files
+protocols:  files
+rpc:        files
+services:   files sss
+
+netgroup:   nisplus sss
+
+publickey:  nisplus
+
+automount:  files nisplus sss
+aliases:    files nisplus
+```
+
+This line basically says, "To find local hosts, first look into local files. Namely, `/etc/hosts`.  If you don't find a match there then look in the DNS settings under `/etc/resolv.conf`". You can even use NIS/NIS+ or LDAP servers as other possible sources
+
+To configure and use remote DNS Servers you will need to be sure your `/etc/resolv.conf` file is configured correctly.  This is what it should look like and it is normally automatically configured by NetworkManager.
+`/etc/resolv.conf`
+```bash
+# Generated by NetworkManager
+search members.linode.com
+nameserver 50.116.53.5
+nameserver 50.116.58.5
+nameserver 50.116.61.5
+```
+
+If I am not mistaken you just need to have the word nameserver and then an IP address of a nameserver.  Like `nameserver 8.8.8.8` to use google's nameserver.  Or `nameserver 1.1.1.1` to use Cloudflare's nameserver.  
+
+Q: Can nameserver and DNS server be used interchangeably?
+Some answers from Quora:
+> The acronym DNS stands for Domain Name System. It is a distributed system for translating host names into IP addresses. The name server is usually what people call the local DNS server,  is typically used to locate a DNS server.  If your website is hosted by another company, sometimes you'll need to use their name servers.
+Name servers "point" your domain name to the company that controls its DNS settings. Usually, this will be the company where you registered the domain name.
+
+> Now, I will come to the Name Server.
+A name server is the server where DNS software is installed and manage all the domain name records. Name servers are often called DSN (Data Source Name) servers.
+Every web site has two name servers to which it is pointed. So, lets say your name servers are ns1.xyz.com and ns2.xyz.com  . So, this is the place where the records for xyz.com would be hosted with the corresponding IP Addresses.
+
+So my understanding is that DNS gets their ip/domainName mapping data from nameservers.
+
+I'd like to take a better look into the mechanics of `/etc/resolv.conf`
+https://www.tldp.org/LDP/nag/node84.html
+So `search` and potentially `domain` are default domains that are tacked onto a hostname?
+And `nameserver` is just an address the computer will use to use a name server to help with DNS queries
+
+
+##### Modify the order in which name resolution is done.
+In the `/etc/nsswitch.conf` file, change the order of the parameters of the `hosts` line
+##### Debug errors related to name resolution.
+When solving your DNS issues, always ensure that you first determine whether your DNS server is returning the same response when queried from different locations. You should also ensure that your domain name is active and that you have a stable and robust ISP
+
+Because of all the moving parts and connections involved, a variety of things can go wrong with your DNS:
+* Slow updates cause problems that ripple out, often misleading you as you try to fix the issue.
+* Incorrect DNS settings create a slow-motion disaster that will not be immediately apparent.
+* There are multiple points of failure, and it can be hard to figure out where things have gone wrong.
+
+**Troubleshooting Common Errors**
+The first thing you can do when faced with DNS errors is to check for the most common issues:
+1. Check your domain registration. Make sure your registration is up to date and paid for, and hasn’t expired. If it is, you’ll have to renew it.
+2. Check your nameservers. Make sure that your domain is using the correct nameservers. If you’ve recently switched your domain registrar or hosting company, this is the most likely issue. Your domain will need to point to the correct nameservers for where your website is hosted. You can check your web host’s website to find out which nameservers you should be using.
+3. Wait for any recent changes to propagate. Unfortunately, due to the nature of DNS servers, it can take up to 24-48 hours for any changes you make to propagate across the web. If you just corrected your nameservers, give it some time to propagate.
+
+##### Awareness of systemd-resolved.
+* `systemd-resolved` part of the `systemd` package.
+* `systemd-resolved` provides resolver services for DNS.
+* The configuration file is located `/etc/systemd/resolved.conf
+* I just checked on an instance and it seems to be disabled by default
+
+##### The following is a partial list of the used files, terms and utilities:
+
+##### /etc/hosts
+##### /etc/resolv.conf
+##### /etc/nsswitch.conf
+##### host
+##### dig
+##### getent
+
 
 ******************************
 
@@ -473,166 +655,3 @@ I think one will be great as it is Linux centered and the speaker is using virtu
 
 * Route
 * IP config (Static or DHCP)
-
-******************************
-
-##### Mon Feb 10 20:16:37 EST 2020
-## 109.4 Configure Client Side DNS
-
-To make a query to a DNS server, (which is how you will be able to connect to the inter and intra nets) your computer needs to know where to send a request to.  The /etc/resolv.conf is where your system will look for the answer.  This file is used to find a DNS server, to ask for an ip address for whatever domain it is that you want.  The service or application requesting the IP address; will then contact the name server at the address listed in /etc/resolv.conf.
-
-`/etc/resolv.conf` is where the computer will look to find where to look for dns entries.  This is what it will use to make external connections to the outside world.
-
-`/etc/hosts` is what the computer will use to make local connections to other computers within the same network.
-
-## 109.4 Configure Client Side DNS
-I am going to create a quick computing "kata" for these Key Knowledge Areas:
-* Query remote DNS servers.
-* Configure local name resolution and use remote DNS servers.
-* Modify the order in which name resolution is done.
-* Debug errors related to name resolution.
-* Awareness of systemd-resolved.
-
-#### Query remote DNS servers
-* dig MX nygel.ninja
-* dig @8.8.8.8 nygel.ninja
-* host nygel.ninja
-* host nygel.ninja 8.8.8.8
-* dig -t any nygel.ninja
-* host -a nygel.ninja
-
-#### Configure local name resolution and use remote DNS servers
-https://debian-handbook.info/browse/stable/sect.hostname-name-service.html
-* This uses `/etc/resolv.conf` and `/etc/hosts/` as well as `/etc/nsswitch`
-
-For local name resolution our tools are, `/etc/nsswitch.conf` and `/etc/hosts`.  How they interact is that that your system will look into `/etc/nsswitch.conf` to see where to look up destinations for locations within its own network.
-
-You can looks at `/etc/hosts` as a small table that maps IP addresses and local machine hostnames.  Even if there was no name server on the local network or there is a network outage, this file can be used to navigate between different local machines.
-
-Example of `/etc/hosts`:
-```
-127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-2600:3c03::f03c:91ff:fe9f:138d   nodeserver
-69.164.214.8   nodeserver
-```
-
-The mechanism for local name resolution is the `/etc/nsswitch` file. You will want to make sure you have an entry that looks like this: `hosts   files dns`.  Here is an example of the file:
-```bash
-#
-# /etc/nsswitch.conf
-#
-# An example Name Service Switch config file. This file should be
-# sorted with the most-used services at the beginning.
-#
-# The entry '[NOTFOUND=return]' means that the search for an
-# entry should stop if the search in the previous entry turned
-# up nothing. Note that if the search failed due to some other reason
-# (like no NIS server responding) then the search continues with the
-# next entry.
-#
-# Valid entries include:
-#
-#	nisplus			Use NIS+ (NIS version 3)
-#	nis			Use NIS (NIS version 2), also called YP
-#	dns			Use DNS (Domain Name Service)
-#	files			Use the local files
-#	db			Use the local database (.db) files
-#	compat			Use NIS on compat mode
-#	hesiod			Use Hesiod for user lookups
-#	[NOTFOUND=return]	Stop searching if not found so far
-#
-
-# To use db, put the "db" in front of "files" for entries you want to be
-# looked up first in the databases
-#
-# Example:
-#passwd:    db files nisplus nis
-#shadow:    db files nisplus nis
-#group:     db files nisplus nis
-
-passwd:     files sss
-shadow:     files sss
-group:      files sss
-#initgroups: files sss
-
-#hosts:     db files nisplus nis dns
-hosts:      files mdns4_minimal [NOTFOUND=return] dns myhostname
-
-# Example - obey only what nisplus tells us...
-#services:   nisplus [NOTFOUND=return] files
-#networks:   nisplus [NOTFOUND=return] files
-#protocols:  nisplus [NOTFOUND=return] files
-#rpc:        nisplus [NOTFOUND=return] files
-#ethers:     nisplus [NOTFOUND=return] files
-#netmasks:   nisplus [NOTFOUND=return] files
-
-bootparams: nisplus [NOTFOUND=return] files
-
-ethers:     files
-netmasks:   files
-networks:   files
-protocols:  files
-rpc:        files
-services:   files sss
-
-netgroup:   nisplus sss
-
-publickey:  nisplus
-
-automount:  files nisplus sss
-aliases:    files nisplus
-```
-
-This line basically says, "To find local hosts, first look into local files. Namely, `/etc/hosts`.  If you don't find a match there then look in the DNS settings under `/etc/resolv.conf`". You can even use NIS/NIS+ or LDAP servers as other possible sources
-
-To configure and use remote DNS Servers you will need to be sure your `/etc/resolv.conf` file is configured correctly.  This is what it should look like and it is normally automatically configured by NetworkManager.
-`/etc/resolv.conf`
-```bash
-# Generated by NetworkManager
-search members.linode.com
-nameserver 50.116.53.5
-nameserver 50.116.58.5
-nameserver 50.116.61.5
-```
-
-If I am not mistaken you just need to have the word nameserver and then an IP address of a nameserver.  Like `nameserver 8.8.8.8` to use google's nameserver.  Or `nameserver 1.1.1.1` to use Cloudflare's nameserver.  
-
-Q: Can nameserver and DNS server be used interchangeably?
-Some answers from Quora:
-> The acronym DNS stands for Domain Name System. It is a distributed system for translating host names into IP addresses. The name server is usually what people call the local DNS server,  is typically used to locate a DNS server.  If your website is hosted by another company, sometimes you'll need to use their name servers.
-Name servers "point" your domain name to the company that controls its DNS settings. Usually, this will be the company where you registered the domain name.
-
-> Now, I will come to the Name Server.
-A name server is the server where DNS software is installed and manage all the domain name records. Name servers are often called DSN (Data Source Name) servers.
-Every web site has two name servers to which it is pointed. So, lets say your name servers are ns1.xyz.com and ns2.xyz.com  . So, this is the place where the records for xyz.com would be hosted with the corresponding IP Addresses.
-
-So my understanding is that DNS gets their ip/domainName mapping data from nameservers.
-
-I'd like to take a better look into the mechanics of `/etc/resolv.conf`
-https://www.tldp.org/LDP/nag/node84.html
-So `search` and potentially `domain` are default domains that are tacked onto a hostname?
-And `nameserver` is just an address the computer will use to use a name server to help with DNS queries
-
-#### Modify the order in which name resolution is done
-In the `/etc/nsswitch.conf` file, change the order of the parameters of the `hosts` line
-
-#### Debug errors related to name resolution
-When solving your DNS issues, always ensure that you first determine whether your DNS server is returning the same response when queried from different locations. You should also ensure that your domain name is active and that you have a stable and robust ISP
-
-Because of all the moving parts and connections involved, a variety of things can go wrong with your DNS:
-* Slow updates cause problems that ripple out, often misleading you as you try to fix the issue.
-* Incorrect DNS settings create a slow-motion disaster that will not be immediately apparent.
-* There are multiple points of failure, and it can be hard to figure out where things have gone wrong.
-
-**Troubleshooting Common Errors**
-The first thing you can do when faced with DNS errors is to check for the most common issues:
-1. Check your domain registration. Make sure your registration is up to date and paid for, and hasn’t expired. If it is, you’ll have to renew it.
-2. Check your nameservers. Make sure that your domain is using the correct nameservers. If you’ve recently switched your domain registrar or hosting company, this is the most likely issue. Your domain will need to point to the correct nameservers for where your website is hosted. You can check your web host’s website to find out which nameservers you should be using.
-3. Wait for any recent changes to propagate. Unfortunately, due to the nature of DNS servers, it can take up to 24-48 hours for any changes you make to propagate across the web. If you just corrected your nameservers, give it some time to propagate.
-
-#### Awareness of systemd-resolved
-* `systemd-resolved` part of the `systemd` package.
-* `systemd-resolved` provides resolver services for DNS.
-* The configuration file is located `/etc/systemd/resolved.conf
-* I just checked on an instance and it seems to be disabled by default
